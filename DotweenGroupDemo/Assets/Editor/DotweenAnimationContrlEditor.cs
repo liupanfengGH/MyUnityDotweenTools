@@ -45,16 +45,6 @@ public class DotweenAnimationContrlEditor : Editor
     };
 
     #region 动画类型绘制部分
-    private void DrawDelay(SerializedProperty sp)
-    {
-        EditorGUILayout.BeginHorizontal();
-        Duration(sp);
-        EditorGUILayout.EndHorizontal();
-
-        GUILayout.Space(10f);
-        DrawEvents(sp);
-    }
-
     private void DrawCameraRect(SerializedProperty sp)
     {
         EditorGUILayout.BeginHorizontal();
@@ -1027,13 +1017,34 @@ public class DotweenAnimationContrlEditor : Editor
         IsFrom(sp);
         GUILayout.Space(20f);
         bool use = UseTargetAsV3(sp);
-        if (use)//使用Vector3向量作为目标
+        if (use)//使用游戏变换作为目标
         {
-            EndValueV3(sp);
-        }
-        else//使用游戏变换作为目标
-        {
+            var valueSo = sp.FindPropertyRelative("isRelative");
+            if (valueSo.boolValue)
+            {
+                valueSo.boolValue = false;
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            var valueSo1 = sp.FindPropertyRelative("endValueV3");
+            if (valueSo1.vector3Value != Vector3.zero)
+            {
+                valueSo1.vector3Value = Vector3.zero;
+                serializedObject.ApplyModifiedProperties();
+            }
+
             EndValueTransform(sp);
+        }
+        else//使用Vector3向量作为目标
+        {
+            var valueSo = sp.FindPropertyRelative("endValueTransform");
+            if (valueSo.objectReferenceValue)
+            {
+                valueSo.objectReferenceValue = null;
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            EndValueV3(sp);
         }
         UseTargetAsVector3(sp);
         EditorGUILayout.EndHorizontal();
@@ -1124,7 +1135,6 @@ public class DotweenAnimationContrlEditor : Editor
         _actionDict[DotweenAnimationContrl.AnimationType.CameraOrthoSize] = DrawCameraOrthoSize;
         _actionDict[DotweenAnimationContrl.AnimationType.CameraPixelRect] = DrawCameraPixelRect;
         _actionDict[DotweenAnimationContrl.AnimationType.CameraRect] = DrawCameraRect;
-        _actionDict[DotweenAnimationContrl.AnimationType.Delay] = DrawDelay;
     }
 
 
@@ -1148,7 +1158,7 @@ public class DotweenAnimationContrlEditor : Editor
         public bool IsSelect { get; set; }
         public int Index { get; set; }
         public bool IsFrist { get; set; }
-        public SerializedProperty dotweenAnimationData { get; set; }
+        public SerializedProperty DotweenAnimationData { get; set; }
     }
 
 
@@ -1236,12 +1246,12 @@ public class DotweenAnimationContrlEditor : Editor
                         var gId = sp.FindPropertyRelative("groupId");
                         if (_aniDict.ContainsKey(gId.intValue))
                         {
-                            _aniDict[gId.intValue].Add(new AnimationSelect() {  Index = i, dotweenAnimationData = sp }) ;
+                            _aniDict[gId.intValue].Add(new AnimationSelect() {  Index = i, DotweenAnimationData = sp }) ;
                         }
                         else
                         {
                             _aniDict[gId.intValue] = new List<AnimationSelect>() {
-                                new AnimationSelect() { Index = i,dotweenAnimationData = sp } };
+                                new AnimationSelect() { Index = i,DotweenAnimationData = sp } };
                         }
                     }
                 }
@@ -1671,42 +1681,37 @@ public class DotweenAnimationContrlEditor : Editor
                 return true;
             }
 
-            bool validateSuccess = true;
-
-            if (animationType != DotweenAnimationContrl.AnimationType.Delay)
+            GUILayout.Space(50f);
+            GUILayout.Label("作用对象:", GUILayout.Width(55f));
+            var valueSo = sp.FindPropertyRelative("targetGO");
+            EditorGUI.BeginChangeCheck();
+            var newObj = EditorGUILayout.ObjectField(valueSo.objectReferenceValue, typeof(GameObject), true, GUILayout.Width(100f));
+            if (EditorGUI.EndChangeCheck())
             {
-                GUILayout.Space(50f);
-                GUILayout.Label("作用对象:", GUILayout.Width(55f));
-                var valueSo = sp.FindPropertyRelative("targetGO");
-                EditorGUI.BeginChangeCheck();
-                var newObj = EditorGUILayout.ObjectField(valueSo.objectReferenceValue, typeof(GameObject), true, GUILayout.Width(100f));
-                if (EditorGUI.EndChangeCheck())
+                valueSo.objectReferenceValue = newObj;
+
+                if (!newObj)
                 {
-                    valueSo.objectReferenceValue = newObj;
-
-                    if (!newObj)
-                    {
-                        var valueSo1 = sp.FindPropertyRelative("target");
-                        valueSo1.objectReferenceValue = null;
-                        var valueSo2 = sp.FindPropertyRelative("targetType");
-                        valueSo2.enumValueIndex = (int)DotweenAnimationContrl.TargetType.Unset;
-                    }
-
-                    serializedObject.ApplyModifiedProperties();
+                    var valueSo1 = sp.FindPropertyRelative("target");
+                    valueSo1.objectReferenceValue = null;
+                    var valueSo2 = sp.FindPropertyRelative("targetType");
+                    valueSo2.enumValueIndex = (int)DotweenAnimationContrl.TargetType.Unset;
                 }
 
-                GUILayout.FlexibleSpace();
-
-                validateSuccess = ValidateInfluenceGameObject(animationType, newObj as GameObject, idx);
-
-                EditorGUI.BeginDisabledGroup(!validateSuccess);
-                if (GUILayout.Button("播放", GUI.skin.button))
-                {
-                    var dac = target as DotweenAnimationContrl;
-                    dac.PlaySingleAnimation(idx);
-                }
-                EditorGUI.EndDisabledGroup();
+                serializedObject.ApplyModifiedProperties();
             }
+
+            GUILayout.FlexibleSpace();
+
+            bool validateSuccess = ValidateInfluenceGameObject(animationType, newObj as GameObject, idx);
+
+            EditorGUI.BeginDisabledGroup(!validateSuccess);
+            if (GUILayout.Button("播放", GUI.skin.button))
+            {
+                var dac = target as DotweenAnimationContrl;
+                dac.PlaySingleAnimation(idx);
+            }
+            EditorGUI.EndDisabledGroup();
 
             EditorGUILayout.EndHorizontal();
 
@@ -1897,7 +1902,7 @@ public class DotweenAnimationContrlEditor : Editor
     private void UseTargetAsVector3(SerializedProperty sp)
     {
         var valueSo = sp.FindPropertyRelative("useTargetAsV3");
-        if (GUILayout.Button(valueSo.boolValue ? "值" : "变换", GUILayout.Width(72f)))
+        if (GUILayout.Button(valueSo.boolValue ? "变换" : "值", GUILayout.Width(72f)))
         {
             valueSo.boolValue = !valueSo.boolValue;
             serializedObject.ApplyModifiedProperties();
@@ -2287,8 +2292,8 @@ public class DotweenAnimationContrlEditor : Editor
         {2,new Color32(255, 255, 0,255) },
         {3,new Color32(0, 255, 0,255) },
         {4,new Color32(0, 127, 255,255) },
-        {6,new Color32(58, 95, 205,255) },
-        {5,new Color32(139, 0, 255,255) }
+        {5,new Color32(139, 0, 255,255) },
+        {6,new Color32(58, 95, 205,255) }
     };
 
 
