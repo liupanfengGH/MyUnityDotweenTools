@@ -1019,13 +1019,6 @@ public class DotweenAnimationContrlEditor : Editor
         bool use = UseTargetAsV3(sp);
         if (use)//使用游戏变换作为目标
         {
-            var valueSo = sp.FindPropertyRelative("isRelative");
-            if (valueSo.boolValue)
-            {
-                valueSo.boolValue = false;
-                serializedObject.ApplyModifiedProperties();
-            }
-
             var valueSo1 = sp.FindPropertyRelative("endValueV3");
             if (valueSo1.vector3Value != Vector3.zero)
             {
@@ -1041,6 +1034,13 @@ public class DotweenAnimationContrlEditor : Editor
             if (valueSo.objectReferenceValue)
             {
                 valueSo.objectReferenceValue = null;
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            valueSo = sp.FindPropertyRelative("isRelative");
+            if (valueSo.boolValue)
+            {
+                valueSo.boolValue = false;
                 serializedObject.ApplyModifiedProperties();
             }
 
