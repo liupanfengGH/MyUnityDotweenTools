@@ -244,6 +244,7 @@ public class DotweenAnimationContrl : MonoBehaviour
             {
                 switch (animationData.animationType)
                 {
+                    #region 移动
                     case AnimationType.Move:
                         {
                             Vector3 endValueV3 = animationData.endValueV3;
@@ -301,6 +302,54 @@ public class DotweenAnimationContrl : MonoBehaviour
                             }
                         }
                         break;
+                    #endregion
+                    #region 局部移动
+                    case AnimationType.LocalMove:
+                        {
+                           tween = animationData.targetGO.transform.DOLocalMove(animationData.endValueV3, animationData.duration, animationData.optionalBool0);
+                        }
+                        break;
+                    #endregion
+                    #region 旋转
+                    case AnimationType.Rotate:
+                        {
+                            switch(animationData.targetType)
+                            {
+                                case TargetType.Transform:
+                                    {
+                                        if(animationData.target is Transform tf)
+                                        {
+                                            tween = tf.DORotate(animationData.endValueV3, animationData.duration, animationData.optionalRotationMode);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.Rigidbody:
+                                    {
+                                        if(animationData.target is Rigidbody rb)
+                                        {
+                                            tween = rb.DORotate(animationData.endValueV3, animationData.duration, animationData.optionalRotationMode);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.Rigidbody2D:
+                                    {
+                                        if(animationData.target is Rigidbody2D rb2d)
+                                        {
+                                            tween = rb2d.DORotate(animationData.endValueFloat, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region 局部旋转
+                    case AnimationType.LocalRotate:
+                        {
+                            tween = animationData.targetGO.transform.DOLocalRotate(animationData.endValueV3, animationData.duration, animationData.optionalRotationMode);
+                        }
+                        break;
+                    #endregion
                 }
             }
             else
