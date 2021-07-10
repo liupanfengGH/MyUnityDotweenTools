@@ -350,6 +350,267 @@ public class DotweenAnimationContrl : MonoBehaviour
                         }
                         break;
                     #endregion
+                    #region 缩放
+                    case AnimationType.Scale:
+                        {
+                            tween = animationData.targetGO.transform.DOScale(animationData.optionalBool0 ? new Vector3(animationData.endValueFloat, animationData.endValueFloat, animationData.endValueFloat) : animationData.endValueV3, animationData.duration);
+                        }
+                        break;
+                    #endregion
+                    #region UGUI UI元素宽高
+                    case AnimationType.UIWidthHeight:
+                        {
+                            if(animationData.target is RectTransform rtf)
+                            {
+                               tween = rtf.DOSizeDelta(animationData.optionalBool0 ? new Vector2(animationData.endValueFloat, animationData.endValueFloat) : animationData.endValueV2, animationData.duration);
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region 颜色
+                    case AnimationType.Color:
+                        {
+                            switch(animationData.targetType)
+                            {
+                                case TargetType.Renderer:
+                                    {
+                                        if(animationData.target is Renderer r)
+                                        {
+                                            tween = r.material.DOColor(animationData.endValueColor, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.Light:
+                                    {
+                                        if(animationData.target is Light l)
+                                        {
+                                            tween = l.DOColor(animationData.endValueColor, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.SpriteRenderer:
+                                    {
+                                        if(animationData.target is SpriteRenderer sp)
+                                        {
+                                            tween = sp.DOColor(animationData.endValueColor, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.Image:
+                                    {
+                                        if(animationData.target is UnityEngine.UI.Graphic g)
+                                        {
+                                            g.DOColor(animationData.endValueColor, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.Text:
+                                    {
+                                        if(animationData.target is UnityEngine.UI.Text t)
+                                        {
+                                            t.DOColor(animationData.endValueColor, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region 渐变
+                    case AnimationType.Fade:
+                    {
+                            switch(animationData.targetType)
+                            {
+                                case TargetType.Renderer:
+                                    {
+                                        if(animationData.target is Renderer r)
+                                        {
+                                            tween = r.material.DOFade(animationData.endValueFloat, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.Light:
+                                    {
+                                        if(animationData.target is Light l)
+                                        {
+                                            tween = l.DOIntensity(animationData.endValueFloat, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.SpriteRenderer:
+                                    {
+                                        if(animationData.target is SpriteRenderer sp)
+                                        {
+                                            tween = sp.DOFade(animationData.endValueFloat, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.Image:
+                                    {
+                                        if(animationData.target is UnityEngine.UI.Graphic g)
+                                        {
+                                            tween = g.DOFade(animationData.endValueFloat, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.Text:
+                                    {
+                                        if(animationData.target is UnityEngine.UI.Text t)
+                                        {
+                                            tween = t.DOFade(animationData.endValueFloat, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.CanvasGroup:
+                                    {
+                                        if(animationData.target is CanvasGroup cg)
+                                        {
+                                            tween = cg.DOFade(animationData.endValueFloat, animationData.duration);
+                                        }
+                                    }
+                                    break;
+                            }
+                    }
+                        break;
+                    #endregion
+                    #region 文本
+                    case AnimationType.Text:
+                        {
+                            if(animationData.target is UnityEngine.UI.Text t)
+                            {
+                                tween = t.DOText(animationData.endValueString, animationData.duration, animationData.optionalBool0, animationData.optionalScrambleMode, animationData.optionalString);
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region 猛烈位移
+                    case AnimationType.PunchPosition:
+                        {
+                            switch(animationData.targetType)
+                            {
+                                case TargetType.Transform:
+                                    {
+                                        if(animationData.target is Transform tf)
+                                        {
+                                            tween = tf.DOPunchPosition(animationData.endValueV3, animationData.duration, animationData.optionalInt0, animationData.optionalFloat0, animationData.optionalBool0);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.RectTransform:
+                                    {
+                                        if(animationData.target is RectTransform rtf)
+                                        {
+                                            tween = rtf.DOPunchAnchorPos(animationData.endValueV2, animationData.duration, animationData.optionalInt0, animationData.optionalFloat0, animationData.optionalBool0);
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region 猛烈缩放
+                    case AnimationType.PunchScale:
+                        {
+                            tween = animationData.targetGO.transform.DOPunchScale(animationData.endValueV3, animationData.duration, animationData.optionalInt0, animationData.optionalFloat0);
+                        }
+                        break;
+                    #endregion
+                    #region 猛烈旋转
+                    case AnimationType.PunchRotation:
+                        {
+                            tween = animationData.targetGO.transform.DOPunchRotation(animationData.endValueV3, animationData.duration, animationData.optionalInt0, animationData.optionalFloat0);
+                        }
+                        break;
+                    #endregion
+                    #region 抖动位移
+                    case AnimationType.ShakePostion:
+                        {
+                            switch(animationData.targetType)
+                            {
+                                case TargetType.Transform:
+                                    {
+                                        if(animationData.target is Transform tf)
+                                        {
+                                            tween = tf.DOShakePosition(animationData.duration, animationData.endValueV3, animationData.optionalInt0, animationData.optionalFloat0, animationData.optionalBool0);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.RectTransform:
+                                    {
+                                        if(animationData.target is RectTransform rtf)
+                                        {
+                                            tween = rtf.DOShakePosition(animationData.duration, animationData.endValueV3, animationData.optionalInt0, animationData.optionalFloat0, animationData.optionalBool0);
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+                    #endregion
+                    #region 抖动缩放
+                    case AnimationType.ShakeScale:
+                        {
+                            tween = animationData.targetGO.transform.DOShakeScale(animationData.duration, animationData.endValueV3, animationData.optionalInt0, animationData.optionalFloat0);
+                        }
+                        break;
+                    #endregion
+                    #region 抖动旋转
+                    case AnimationType.ShakeRotation:
+                        {
+                            tween = animationData.targetGO.transform.DOShakeRotation(animationData.duration, animationData.endValueV3, animationData.optionalInt0, animationData.optionalFloat0);
+                        }
+                        break;
+                    #endregion
+                    #region 摄像机部分
+                    case AnimationType.CameraAspect:
+                        {
+                            if(animationData.target is Camera c)
+                            {
+                                tween = c.DOAspect(animationData.endValueFloat, animationData.duration);
+                            }
+                        }
+                        break;
+                    case AnimationType.CameraBackgroundColor:
+                        {
+                            if (animationData.target is Camera c)
+                            {
+                                tween = c.DOColor(animationData.endValueColor, animationData.duration);
+                            }
+                        }
+                        break;
+                    case AnimationType.CameraFieldOfView:
+                        {
+                            if (animationData.target is Camera c)
+                            {
+                                tween = c.DOFieldOfView(animationData.endValueFloat, animationData.duration);
+                            }
+                        }
+                        break;
+                    case AnimationType.CameraOrthoSize:
+                        {
+                            if (animationData.target is Camera c)
+                            {
+                                tween = c.DOOrthoSize(animationData.endValueFloat, animationData.duration);
+                            }
+                        }
+                        break;
+                    case AnimationType.CameraPixelRect:
+                        {
+                            if (animationData.target is Camera c)
+                            {
+                                tween = c.DOPixelRect(animationData.endValueRect, animationData.duration);
+                            }
+                        }
+                        break;
+                    case AnimationType.CameraRect:
+                        {
+                            if (animationData.target is Camera c)
+                            {
+                                tween = c.DORect(animationData.endValueRect, animationData.duration);
+                            }
+                        }
+                        break;
+                        #endregion
                 }
             }
             else

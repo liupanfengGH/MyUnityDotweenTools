@@ -444,7 +444,7 @@ PrefabInstance:
     - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
         type: 3}
       propertyPath: animationList.Array.data[0].loops
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
         type: 3}
@@ -459,7 +459,7 @@ PrefabInstance:
     - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
         type: 3}
       propertyPath: animationList.Array.data[0].animationType
-      value: 3
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
         type: 3}
@@ -495,6 +495,16 @@ PrefabInstance:
         type: 3}
       propertyPath: animationList.Array.data[0].endValueV3.y
       value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
+        type: 3}
+      propertyPath: animationList.Array.data[0].optionalInt0
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
+        type: 3}
+      propertyPath: animationList.Array.data[0].optionalFloat0
+      value: 0.168
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8573c8e5013c7e849b424d783cd24c31, type: 3}
