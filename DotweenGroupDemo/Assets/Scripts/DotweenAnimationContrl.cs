@@ -213,6 +213,11 @@ public class DotweenAnimationContrl : MonoBehaviour
 
     }
 
+    public void StopAnimation()
+    {
+
+    }
+
     public void PlaySingleAnimation(int idx)
     {
        var tween = CreateTween(animationList[idx]);

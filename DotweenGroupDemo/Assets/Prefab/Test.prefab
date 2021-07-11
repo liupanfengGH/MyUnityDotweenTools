@@ -75,11 +75,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationList:
   - groupId: 3
-    targetGO: {fileID: 3233506735502183852}
+    targetGO: {fileID: 5037070300621953198}
     delay: 0
     duration: 0.8
     isSpeedBase: 0
-    easeType: 37
+    easeType: 1
     easeCurve:
       serializedVersion: 2
       m_Curve:
@@ -113,16 +113,16 @@ MonoBehaviour:
     autoKill: 0
     isActive: 1
     isValid: 0
-    target: {fileID: 495697244049572900}
-    animationType: 6
-    targetType: 11
+    target: {fileID: 7649322510661912913}
+    animationType: 9
+    targetType: 10
     forcedTargetType: 0
     useTargetAsV3: 1
     endValueFloat: 0
     endValueV3: {x: 0, y: 0, z: 0}
     endValueV2: {x: 0, y: 0}
     endValueColor: {r: 1, g: 1, b: 1, a: 1}
-    endValueString: 
+    endValueString: "\u8FD9\u662F\u4E00\u6B21\u6D4B\u8BD5\uFF01\u4E0D\u77E5\u9053\u6548\u679C\u5982\u4F55\uFF0C\u542F\u52A8\u8D77\u6765\u770B\u770B\u5427\u3002\uFF01\u6211\u4EEC\u90FD\u662F\u7231\u6D4B\u8BD5\u7684\u5C0F\u7A0B\u5E8F\u3002"
     endValueRect:
       serializedVersion: 2
       x: 0
@@ -134,9 +134,9 @@ MonoBehaviour:
     optionalFloat0: 10
     optionalInt0: 1
     optionalRotationMode: 0
-    optionalScrambleMode: 0
+    optionalScrambleMode: 1
     optionalString: 
-    hasStart: 1
+    hasStart: 0
     onStart:
       m_PersistentCalls:
         m_Calls:
@@ -151,7 +151,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 1
-    hasPlay: 1
+    hasPlay: 0
     onPlay:
       m_PersistentCalls:
         m_Calls:
@@ -166,7 +166,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 1
-    hasUpdate: 1
+    hasUpdate: 0
     onUpdate:
       m_PersistentCalls:
         m_Calls:
@@ -181,7 +181,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 1
-    hasStepComplete: 1
+    hasStepComplete: 0
     onStepComplete:
       m_PersistentCalls:
         m_Calls:
@@ -196,7 +196,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 1
-    hasComplete: 1
+    hasComplete: 0
     onComplete:
       m_PersistentCalls:
         m_Calls:
@@ -211,7 +211,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 1
-    hasRewind: 1
+    hasRewind: 0
     onRewind:
       m_PersistentCalls:
         m_Calls:
@@ -226,7 +226,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 1
-    hasCreated: 1
+    hasCreated: 0
     onCreated:
       m_PersistentCalls:
         m_Calls:

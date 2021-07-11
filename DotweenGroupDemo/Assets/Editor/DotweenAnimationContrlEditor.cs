@@ -1219,6 +1219,8 @@ public class DotweenAnimationContrlEditor : Editor
 
             GUILayout.BeginHorizontal();
 
+            EditorGUI.BeginDisabledGroup(isPlaying || isPlayGroup || isPlayAll);
+
             if (GUILayout.Button(add_txt, GUILayout.Width(40f)))
             {
                 if (target is DotweenAnimationContrl dac)
@@ -1264,10 +1266,14 @@ public class DotweenAnimationContrlEditor : Editor
                 GUIUtility.ExitGUI();
             }
 
-            GUILayout.Label(new GUIContent($"动画序列数量:{_tweens.arraySize}", "控制器中存在的所有动画序列数量"), GUILayout.Height(20f));
+            GUILayout.Label(new GUIContent($"动画序列数量:{_tweens.arraySize}", "控制器中存在的所有动画序列数量"), GUILayout.Height(20f));            
 
-            GUILayout.FlexibleSpace();            
+            GUILayout.FlexibleSpace();
+
             isOnPlayAnimationGroups = GUILayout.Toggle(isOnPlayAnimationGroups,palyGroups_txt, GUILayout.Height(20f));
+
+            EditorGUI.EndDisabledGroup();
+
             if (isOnPlayAnimationGroups)
             {
                 if (_aniDict.Count == 0)
@@ -1288,23 +1294,33 @@ public class DotweenAnimationContrlEditor : Editor
                     }
                 }
 
-                if (GUILayout.Button("播放选中组动画"))
+                EditorGUI.BeginDisabledGroup(isPlaying || isPlayAll);
+                if (GUILayout.Button(isPlayGroup ? "停止" : "播放选中组动画"))
                 {
                     _playList.Clear();
-                    foreach(var vk in _aniDict)
+                    var dac = target as DotweenAnimationContrl;
+                    if (!isPlayGroup)
                     {
-                        foreach (var v in vk.Value)
+                        foreach (var vk in _aniDict)
                         {
-                            if (v.IsSelect)
+                            foreach (var v in vk.Value)
                             {
-                                _playList.Add(v.Index);
+                                if (v.IsSelect)
+                                {
+                                    _playList.Add(v.Index);
+                                }
                             }
                         }
+                        dac.PlayAnimations(_playList);
+                        _playList.Clear();
                     }
-                    var dac = target as DotweenAnimationContrl;
-                    dac.PlayAnimations(_playList);
-                    _playList.Clear();
+                    else
+                    {
+                        dac.StopAnimation();
+                    }
+                    isPlayGroup = !isPlayGroup;
                 }
+                EditorGUI.EndDisabledGroup();
             }
             else
             {
@@ -1313,15 +1329,25 @@ public class DotweenAnimationContrlEditor : Editor
                     _aniDict.Clear();
                 }
 
-                if (GUILayout.Button("播放全部动画"))
+                EditorGUI.BeginDisabledGroup(isPlaying || isPlayGroup);
+                if (GUILayout.Button(isPlayAll ? "停止" : "播放全部动画"))
                 {
-                    //播放所有动画
-                    if (target is DotweenAnimationContrl dac)
+                    var dac = target as DotweenAnimationContrl;
+                    if (!isPlayAll)
                     {
+                        //播放所有动画
                         dac.PlayAnimation();
                     }
+                    else
+                    {
+                        dac.StopAnimation();
+                    }
+                    isPlayAll = !isPlayAll;
                 }
+                EditorGUI.EndDisabledGroup();
             }
+
+           
 
             GUILayout.EndHorizontal();
 
@@ -1399,8 +1425,14 @@ public class DotweenAnimationContrlEditor : Editor
 
     private List<int> playIndex = new List<int>();
 
+    private bool isPlaying,isPlayAll,isPlayGroup;
+
     private bool PrewAnimationData(SerializedProperty sp,int idx,bool enableSubId)
     {
+        isPlaying = playIndex.Contains(idx);
+        
+        EditorGUI.BeginDisabledGroup(isPlaying || isPlayAll || isPlayGroup);
+        
         EditorGUILayout.BeginHorizontal();
 
         GUILayout.Space(10F);
@@ -1737,8 +1769,9 @@ public class DotweenAnimationContrlEditor : Editor
 
             bool validateSuccess = ValidateInfluenceGameObject(animationType, newObj as GameObject, idx);
 
-            EditorGUI.BeginDisabledGroup(!validateSuccess || isOnPlayAnimationGroups);
-            bool isPlaying = playIndex.Contains(idx);
+            EditorGUI.EndDisabledGroup();
+
+            EditorGUI.BeginDisabledGroup(!validateSuccess || isOnPlayAnimationGroups || isPlayAll);
             if (GUILayout.Button(isPlaying ? "停止" : "播放")) 
             {
                 var dac = target as DotweenAnimationContrl;
@@ -1752,9 +1785,13 @@ public class DotweenAnimationContrlEditor : Editor
                 {
                     dac.StopSingleAnimation(idx);
                     playIndex.Remove(idx);
+                    isPlaying = false;
                 }                
             }
             EditorGUI.EndDisabledGroup();
+
+
+            EditorGUI.BeginDisabledGroup(isPlaying || isPlayAll || isPlayGroup);
 
             EditorGUILayout.EndHorizontal();
 
@@ -1776,6 +1813,8 @@ public class DotweenAnimationContrlEditor : Editor
 
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
+
+            EditorGUI.EndDisabledGroup();
         }
 
         return true;
