@@ -59,7 +59,7 @@ public class DotweenAnimationData
     /// 是否忽略时间缩放
     /// </summary>
     public bool isIgnoreTimeScale = false;
-    public bool autoKill = true;
+    public bool autoKill = false;
 
     public bool isActive = true;
     public bool isValid;
@@ -150,6 +150,7 @@ public class DotweenAnimationContrl : MonoBehaviour
         Rotate,
         LocalRotate,
         Scale,
+        Jump,
         Color,
         Fade,
         Text,
@@ -185,6 +186,8 @@ public class DotweenAnimationContrl : MonoBehaviour
     /// </summary>
     public List<DotweenAnimationData> animationList;
 
+    private Dictionary<int, Tween> _playingDict = new Dictionary<int, Tween>();
+
     /// <summary>
     /// 是否启用子模式
     /// </summary>
@@ -213,6 +216,7 @@ public class DotweenAnimationContrl : MonoBehaviour
     public void PlaySingleAnimation(int idx)
     {
        var tween = CreateTween(animationList[idx]);
+        _playingDict[idx] = tween;
        tween.Play();
     }
 
@@ -220,6 +224,15 @@ public class DotweenAnimationContrl : MonoBehaviour
     {
        
 
+    }
+
+    public void StopSingleAnimation(int idx)
+    {
+        if(_playingDict.TryGetValue(idx,out var t))
+        {
+            t.Rewind();
+            _playingDict.Remove(idx);
+        }
     }
 
     /// <summary>
@@ -354,6 +367,31 @@ public class DotweenAnimationContrl : MonoBehaviour
                     case AnimationType.Scale:
                         {
                             tween = animationData.targetGO.transform.DOScale(animationData.optionalBool0 ? new Vector3(animationData.endValueFloat, animationData.endValueFloat, animationData.endValueFloat) : animationData.endValueV3, animationData.duration);
+                        }
+                        break;
+                    #endregion
+                    #region 跳(抛物线?)
+                    case AnimationType.Jump:
+                        {
+                            switch (animationData.targetType) 
+                            {
+                                case TargetType.Transform:
+                                    {
+                                        if (animationData.target is Transform tf)
+                                        {
+                                            tween = tf.DOJump(animationData.endValueV3, animationData.optionalFloat0, animationData.optionalInt0, animationData.duration, animationData.optionalBool0);
+                                        }
+                                    }
+                                    break;
+                                case TargetType.RectTransform:
+                                    {
+                                        if(animationData.target is RectTransform rtf)
+                                        {
+                                            tween = rtf.DOJumpAnchorPos(animationData.endValueV3, animationData.optionalFloat0, animationData.optionalInt0, animationData.duration, animationData.optionalBool0);
+                                        }
+                                    }
+                                    break;
+                            }
                         }
                         break;
                     #endregion

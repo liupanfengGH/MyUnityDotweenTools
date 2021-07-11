@@ -1,15 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using DG.DOTweenEditor.Core;
-using DG.DOTweenEditor.UI;
 using DG.Tweening;
 using DG.DemiEditor;
-using DG.DOTweenEditor;
 using System;
 using UnityEngine.UI;
-using UnityEngine.Events;
 
 [CustomEditor(typeof(DotweenAnimationContrl))]
 public class DotweenAnimationContrlEditor : Editor
@@ -22,7 +17,10 @@ public class DotweenAnimationContrlEditor : Editor
         PunchVibrato,
         PunchElasticity,
         ShakeVibrato,
-        ShakeRandomness
+        ShakeRandomness, 
+        Jump,
+        JumpPower,
+        JumpsNum
     }
 
     private SerializedProperty _tweens;
@@ -38,13 +36,46 @@ public class DotweenAnimationContrlEditor : Editor
         { GUIContentKey.Scale,new GUIContent("等比:", "如果为TRUE，数据都是等比值") },
         { GUIContentKey.RichText,new GUIContent("启用富文本:") },
         { GUIContentKey.Snapping,new GUIContent("折断:", "如果为TRUE，tween将平滑地将所有值转换为整数") },
-        { GUIContentKey.PunchVibrato,new GUIContent("猛击:", "猛击震动大小") },
-        { GUIContentKey.PunchElasticity,new GUIContent("弹性:", "向后弹跳时，向量会超出起始位置多少") },
+        { GUIContentKey.PunchVibrato,new GUIContent("力度:", "力度大小") },
+        { GUIContentKey.PunchElasticity,new GUIContent("回弹:", "向后弹跳时，向量会超出起始位置多少") },
         { GUIContentKey.ShakeVibrato,new GUIContent("震动:", "振动的大小") },
-        { GUIContentKey.ShakeRandomness,new GUIContent("随机性:", "振动的随机范围") }
+        { GUIContentKey.ShakeRandomness,new GUIContent("随机性:", "振动的随机范围") },
+        { GUIContentKey.Jump,new GUIContent("取整:", "是否使用小数值") },
+        { GUIContentKey.JumpPower,new GUIContent("跳力度:") },
+        { GUIContentKey.JumpsNum,new GUIContent("跳次数:") }
     };
 
     #region 动画类型绘制部分
+
+    private void DrawJump(SerializedProperty sp)
+    {
+        EditorGUILayout.BeginHorizontal();
+        Duration(sp);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        OptionalFloat0(sp,GUIContentKey.JumpPower,45f,0,100f);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        OptionalInt0(sp, GUIContentKey.JumpsNum, 45f, 1, short.MaxValue);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        IsFrom(sp,true);
+        GUILayout.Space(20f);
+        EndValueV3(sp);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        OptionalBool0(sp,GUIContentKey.Jump,30f);
+        EditorGUILayout.EndHorizontal();
+
+        GUILayout.Space(10f);
+
+        DrawEvents(sp);
+    }
+
     private void DrawCameraRect(SerializedProperty sp)
     {
         EditorGUILayout.BeginHorizontal();
@@ -1073,6 +1104,7 @@ public class DotweenAnimationContrlEditor : Editor
 
         _actionDict.Clear();
         _aniDict.Clear();
+        playIndex.Clear();
         BindAction();
 
         EditorApplication.update -= CheckFocused1;
@@ -1135,8 +1167,8 @@ public class DotweenAnimationContrlEditor : Editor
         _actionDict[DotweenAnimationContrl.AnimationType.CameraOrthoSize] = DrawCameraOrthoSize;
         _actionDict[DotweenAnimationContrl.AnimationType.CameraPixelRect] = DrawCameraPixelRect;
         _actionDict[DotweenAnimationContrl.AnimationType.CameraRect] = DrawCameraRect;
+        _actionDict[DotweenAnimationContrl.AnimationType.Jump] = DrawJump;
     }
-
 
     private void EventNames()
     {
@@ -1365,6 +1397,8 @@ public class DotweenAnimationContrlEditor : Editor
 
     private HashSet<int> exsitIds = new HashSet<int>();
 
+    private List<int> playIndex = new List<int>();
+
     private bool PrewAnimationData(SerializedProperty sp,int idx,bool enableSubId)
     {
         EditorGUILayout.BeginHorizontal();
@@ -1426,9 +1460,7 @@ public class DotweenAnimationContrlEditor : Editor
 
         if (animationType != DotweenAnimationContrl.AnimationType.None)
         {
-            //GUI.color = Color.green;
             GUILayout.Label($"[{eName}]");
-            //GUI.color = Color.white;
         }
 
         GUILayout.FlexibleSpace();
@@ -1705,11 +1737,22 @@ public class DotweenAnimationContrlEditor : Editor
 
             bool validateSuccess = ValidateInfluenceGameObject(animationType, newObj as GameObject, idx);
 
-            EditorGUI.BeginDisabledGroup(!validateSuccess);
-            if (GUILayout.Button("播放", GUI.skin.button))
+            EditorGUI.BeginDisabledGroup(!validateSuccess || isOnPlayAnimationGroups);
+            bool isPlaying = playIndex.Contains(idx);
+            if (GUILayout.Button(isPlaying ? "停止" : "播放")) 
             {
                 var dac = target as DotweenAnimationContrl;
-                dac.PlaySingleAnimation(idx);
+
+                if (!isPlaying)
+                {
+                    playIndex.Add(idx);
+                    dac.PlaySingleAnimation(idx);
+                }
+                else
+                {
+                    dac.StopSingleAnimation(idx);
+                    playIndex.Remove(idx);
+                }                
             }
             EditorGUI.EndDisabledGroup();
 
@@ -1882,15 +1925,16 @@ public class DotweenAnimationContrlEditor : Editor
         }
     }
 
-    private void IsFrom(SerializedProperty sp)
+    private void IsFrom(SerializedProperty sp,bool disableBtnSwith = false)
     {
         var valueSo = sp.FindPropertyRelative("isFrom");
-
+        EditorGUI.BeginDisabledGroup(disableBtnSwith);
         if (GUILayout.Button(valueSo.boolValue ? "从" : "到", GUILayout.Width(80f)))
         {
             valueSo.boolValue = !valueSo.boolValue;
             serializedObject.ApplyModifiedProperties();
         }
+        EditorGUI.EndDisabledGroup();
     }
 
     private bool UseTargetAsV3(SerializedProperty sp)
@@ -2191,6 +2235,10 @@ public class DotweenAnimationContrlEditor : Editor
             }},
         {DotweenAnimationContrl.AnimationType.CameraRect,new Type[]{
             typeof(Camera)
+            }},
+        { DotweenAnimationContrl.AnimationType.Jump,new Type[]{
+            typeof(RectTransform),
+            typeof(Transform)
             }}
     };
 
