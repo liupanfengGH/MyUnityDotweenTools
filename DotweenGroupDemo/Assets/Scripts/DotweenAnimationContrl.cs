@@ -187,12 +187,10 @@ public class DotweenAnimationContrl : MonoBehaviour
     public List<DotweenAnimationData> animationList;
 
     private Dictionary<int, Tween> _playingDict = new Dictionary<int, Tween>();
-
     /// <summary>
     /// 是否启用子模式
     /// </summary>
     public bool enableSubId;
-
     /// <summary>
     /// 是否自动播放
     /// </summary>
@@ -208,14 +206,45 @@ public class DotweenAnimationContrl : MonoBehaviour
         
     }
 
+    private Sequence _sequence;
+    private SortedDictionary<int, List<DotweenAnimationData>> _groupDict = new SortedDictionary<int, List<DotweenAnimationData>>();
     public void PlayAnimation()
     {
+        _groupDict.Clear();
+        _sequence = DOTween.Sequence();
+        _sequence.SetAutoKill(false);
 
+        for (int i = 0; i < animationList.Count; ++i)
+        {
+            var gId = animationList[i].groupId;
+            if (_groupDict.ContainsKey(gId))
+            {
+                _groupDict[gId].Add(animationList[i]);
+            }
+            else
+            {
+                _groupDict[gId] = new List<DotweenAnimationData>() { animationList[i] };
+            }
+        }
+
+        foreach(var vk in _groupDict)
+        {
+            var subSequence = DOTween.Sequence();
+            subSequence.SetAutoKill(false);
+            foreach (var v in vk.Value)
+            {
+                var tween = CreateTween(v);
+                subSequence.Join(tween);
+            }
+            _sequence.Append(subSequence);
+        }
+
+        _sequence.Play();
     }
 
     public void StopAnimation()
     {
-
+        _sequence.Rewind();
     }
 
     public void PlaySingleAnimation(int idx)
@@ -227,8 +256,37 @@ public class DotweenAnimationContrl : MonoBehaviour
 
     public void PlayAnimations(List<int> idxs)
     {
-       
+        _groupDict.Clear();
+        _sequence = DOTween.Sequence();
+        _sequence.SetAutoKill(false);
 
+        for (int i = 0; i < idxs.Count; ++i) 
+        {
+            var gId = animationList[idxs[i]].groupId;
+            if (_groupDict.ContainsKey(gId))
+            {
+                _groupDict[gId].Add(animationList[idxs[i]]);
+            }
+            else
+            {
+                _groupDict[gId] = new List<DotweenAnimationData>() { animationList[idxs[i]] };
+            }
+
+        }
+
+        foreach (var vk in _groupDict)
+        {
+            var subSequence = DOTween.Sequence();
+            subSequence.SetAutoKill(false);
+            foreach (var v in vk.Value)
+            {
+                var tween = CreateTween(v);
+                subSequence.Join(tween);
+            }
+            _sequence.Append(subSequence);
+        }
+
+        _sequence.Play();
     }
 
     public void StopSingleAnimation(int idx)
@@ -443,7 +501,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is UnityEngine.UI.Graphic g)
                                         {
-                                            g.DOColor(animationData.endValueColor, animationData.duration);
+                                            tween = g.DOColor(animationData.endValueColor, animationData.duration);
                                         }
                                     }
                                     break;
@@ -451,7 +509,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is UnityEngine.UI.Text t)
                                         {
-                                            t.DOColor(animationData.endValueColor, animationData.duration);
+                                            tween = t.DOColor(animationData.endValueColor, animationData.duration);
                                         }
                                     }
                                     break;

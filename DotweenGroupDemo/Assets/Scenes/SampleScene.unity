@@ -121,24 +121,94 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &705392362 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5037070300621953198, guid: 8573c8e5013c7e849b424d783cd24c31,
-    type: 3}
-  m_PrefabInstance: {fileID: 4325985134110994445}
+--- !u!21 &669372488
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &705392364 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7649322510661912913, guid: 8573c8e5013c7e849b424d783cd24c31,
-    type: 3}
-  m_PrefabInstance: {fileID: 4325985134110994445}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 705392362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name: Default-Material (Instance)
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Detail:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Occlusion:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _AlphaTestRef: 0.5
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _EmissionScaleUI: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _Lightmapping: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0.99999994}
+    - _EmissionColorUI: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColorWithMapUI: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,6 +384,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1084222084 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5919087658726400392, guid: 8573c8e5013c7e849b424d783cd24c31,
+    type: 3}
+  m_PrefabInstance: {fileID: 4325985134110994445}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47ab6c92f89703949a0cad71dac77c8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2005645405
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,6 +539,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Test
       objectReference: {fileID: 0}
+    - target: {fileID: 5555722008125575555, guid: 8573c8e5013c7e849b424d783cd24c31,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 669372488}
     - target: {fileID: 7649322510661912913, guid: 8573c8e5013c7e849b424d783cd24c31,
         type: 3}
       propertyPath: m_FontData.m_FontSize
@@ -489,38 +576,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
         type: 3}
-      propertyPath: animationList.Array.data[0].animationType
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
-        type: 3}
-      propertyPath: animationList.Array.data[0].targetGO
+      propertyPath: animationList.Array.data[2].onRewind.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 705392362}
+      objectReference: {fileID: 1084222084}
     - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
         type: 3}
-      propertyPath: animationList.Array.data[0].target
-      value: 
-      objectReference: {fileID: 705392364}
-    - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
-        type: 3}
-      propertyPath: animationList.Array.data[0].targetType
-      value: 10
+      propertyPath: animationList.Array.data[2].onRewind.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RewindEvent
       objectReference: {fileID: 0}
     - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
         type: 3}
-      propertyPath: animationList.Array.data[0].optionalScrambleMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
-        type: 3}
-      propertyPath: animationList.Array.data[0].endValueString
-      value: "\u8FD9\u662F\u4E00\u6B21\u6D4B\u8BD5\uFF01\u4E0D\u77E5\u9053\u6548\u679C\u5982\u4F55\uFF0C\u542F\u52A8\u8D77\u6765\u770B\u770B\u5427\u3002\uFF01\u6211\u4EEC\u90FD\u662F\u7231\u6D4B\u8BD5\u7684\u5C0F\u7A0B\u5E8F\u3002"
-      objectReference: {fileID: 0}
-    - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
-        type: 3}
-      propertyPath: animationList.Array.data[0].easeType
+      propertyPath: animationList.Array.data[2].onRewind.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
+        type: 3}
+      propertyPath: animationList.Array.data[2].onRewind.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7710812354313745157, guid: 8573c8e5013c7e849b424d783cd24c31,
+        type: 3}
+      propertyPath: animationList.Array.data[2].onRewind.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8573c8e5013c7e849b424d783cd24c31, type: 3}
