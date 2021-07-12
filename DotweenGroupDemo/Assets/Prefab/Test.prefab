@@ -106,7 +106,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     loopType: 0
     loops: 1
-    id: 0
+    id: 1
     isRelative: 0
     isFrom: 0
     isIgnoreTimeScale: 1
@@ -386,8 +386,8 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     loopType: 1
-    loops: -1
-    id: 0
+    loops: 3
+    id: 1
     isRelative: 0
     isFrom: 0
     isIgnoreTimeScale: 1
@@ -456,7 +456,7 @@ MonoBehaviour:
     onCreated:
       m_PersistentCalls:
         m_Calls: []
-  enableSubId: 0
+  enableSubId: 1
   autoPlay: 0
 --- !u!1 &2984024212096047983
 GameObject:

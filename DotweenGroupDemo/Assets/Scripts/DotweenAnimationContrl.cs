@@ -227,6 +227,22 @@ public class DotweenAnimationContrl : MonoBehaviour
             }
         }
 
+        if(enableSubId)
+        {
+            var keys = _groupDict.Keys;
+            foreach (var key in keys)
+            {
+                if (_groupDict.ContainsKey(key))
+                {
+                    var dotweens = _groupDict[key];
+                    if (null != dotweens)
+                    {
+                        dotweens.Sort((a, b) => { return a.id.CompareTo(b.id); });
+                    }
+                }
+            }
+        }
+
         foreach(var vk in _groupDict)
         {
             var subSequence = DOTween.Sequence();
@@ -245,6 +261,20 @@ public class DotweenAnimationContrl : MonoBehaviour
     public void StopAnimation()
     {
         _sequence.Rewind();
+    }
+
+    public void StopAllAnimation()
+    {
+        if (null != _sequence)
+        {
+            _sequence.Rewind();
+        }
+
+        foreach(var vk in _playingDict)
+        {
+            vk.Value.Rewind();
+        }
+        _playingDict.Clear();
     }
 
     public void PlaySingleAnimation(int idx)
@@ -271,7 +301,22 @@ public class DotweenAnimationContrl : MonoBehaviour
             {
                 _groupDict[gId] = new List<DotweenAnimationData>() { animationList[idxs[i]] };
             }
+        }
 
+        if (enableSubId)
+        {
+            var keys = _groupDict.Keys;
+            foreach (var key in keys)
+            {
+                if (_groupDict.ContainsKey(key))
+                {
+                    var dotweens = _groupDict[key];
+                    if (null != dotweens)
+                    {
+                        dotweens.Sort((a, b) => { return a.id.CompareTo(b.id); });
+                    }
+                }
+            }
         }
 
         foreach (var vk in _groupDict)

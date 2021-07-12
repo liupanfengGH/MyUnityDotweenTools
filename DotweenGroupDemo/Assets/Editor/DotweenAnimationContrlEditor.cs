@@ -1945,7 +1945,7 @@ public class DotweenAnimationContrlEditor : Editor
 
     private int Loops(SerializedProperty sp)
     {
-        GUILayout.Label(new GUIContent("循环次数:", "循环次数 -1为无限循环"), GUILayout.Width(55f));
+        GUILayout.Label(new GUIContent("循环次数:"), GUILayout.Width(55f));
 
         var valueSo = sp.FindPropertyRelative("loops");
 
@@ -1953,7 +1953,7 @@ public class DotweenAnimationContrlEditor : Editor
         var iNewValue = EditorGUILayout.IntField(valueSo.intValue, GUILayout.ExpandWidth(true));
         if (EditorGUI.EndChangeCheck())
         {
-            valueSo.intValue = iNewValue < -1 ? -1 : iNewValue;
+            valueSo.intValue = iNewValue < 1 ? 1 : iNewValue;
             serializedObject.ApplyModifiedProperties();
         }
 
