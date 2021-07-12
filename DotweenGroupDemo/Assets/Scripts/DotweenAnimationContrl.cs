@@ -198,7 +198,7 @@ public class DotweenAnimationContrl : MonoBehaviour
     /// <summary>
     ///自动播放 
     /// </summary>
-    public int playCount;
+    public int playCount = 1;
     /// <summary>
     /// 运行时计算的播放次数
     /// </summary>

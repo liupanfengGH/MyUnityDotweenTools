@@ -1393,7 +1393,7 @@ public class DotweenAnimationContrlEditor : Editor
 
             GUILayout.BeginHorizontal();            
             EditorGUI.BeginChangeCheck();
-            bool bNew = EditorGUILayout.ToggleLeft("自动播放", vSo.boolValue, GUILayout.Width(70f));
+            bool bNew = EditorGUILayout.ToggleLeft("自动播放", vSo.boolValue, GUILayout.Width(70f),GUILayout.Height(18f));
             if(EditorGUI.EndChangeCheck())
             {
                 vSo.boolValue = bNew;
@@ -1403,7 +1403,7 @@ public class DotweenAnimationContrlEditor : Editor
             if(bNew)
             {
                 vSo = serializedObject.FindProperty("playCount");
-                GUILayout.Label(new GUIContent("播放次数:","-1为无限次数"), GUILayout.Width(52f));
+                GUILayout.Label(new GUIContent("播放次数:","-1为无限次数"), GUILayout.Width(54f), GUILayout.Height(18f));
                 EditorGUI.BeginChangeCheck();
                 int iNew = EditorGUILayout.IntField(vSo.intValue,GUILayout.Width(25f));
                 if (EditorGUI.EndChangeCheck())
@@ -1449,7 +1449,7 @@ public class DotweenAnimationContrlEditor : Editor
 
             for (int i = 0; i < _tweens.arraySize; ++i) 
             {
-                bool isContinue = PrewAnimationData(_tweens.GetArrayElementAtIndex(i), i, bv);
+                bool isContinue = PrewAnimationData(_tweens.GetArrayElementAtIndex(i), i, bv, bNew);
                 if (!isContinue) break;
             }
 
@@ -1491,7 +1491,7 @@ public class DotweenAnimationContrlEditor : Editor
 
     private bool isPlaying,isPlayAll,isPlayGroup;
 
-    private bool PrewAnimationData(SerializedProperty sp,int idx,bool enableSubId)
+    private bool PrewAnimationData(SerializedProperty sp,int idx,bool enableSubId,bool autoPlay)
     {
         isPlaying = playIndex.Contains(idx);
         
@@ -1842,7 +1842,7 @@ public class DotweenAnimationContrlEditor : Editor
 
             EditorGUI.EndDisabledGroup();
 
-            EditorGUI.BeginDisabledGroup(!validateSuccess || isOnPlayAnimationGroups || isPlayAll);
+            EditorGUI.BeginDisabledGroup(!validateSuccess || isOnPlayAnimationGroups || isPlayAll || autoPlay);
             if (GUILayout.Button(isPlaying ? "停止" : "播放")) 
             {
                 var dac = target as DotweenAnimationContrl;
