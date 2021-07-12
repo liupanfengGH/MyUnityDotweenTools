@@ -76,7 +76,7 @@ MonoBehaviour:
   animationList:
   - groupId: 0
     targetGO: {fileID: 3233506735502183852}
-    delay: 0
+    delay: 0.7
     duration: 1
     isSpeedBase: 0
     easeType: 1
@@ -257,100 +257,21 @@ MonoBehaviour:
     onComplete:
       m_PersistentCalls:
         m_Calls: []
-    hasRewind: 0
+    hasRewind: 1
     onRewind:
       m_PersistentCalls:
-        m_Calls: []
-    hasCreated: 0
-    onCreated:
-      m_PersistentCalls:
-        m_Calls: []
-  - groupId: 1
-    targetGO: {fileID: 3233506735502183852}
-    delay: 0
-    duration: 1
-    isSpeedBase: 0
-    easeType: 30
-    easeCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    loopType: 0
-    loops: 1
-    id: 0
-    isRelative: 0
-    isFrom: 0
-    isIgnoreTimeScale: 0
-    autoKill: 0
-    isActive: 1
-    isValid: 0
-    target: {fileID: 495697244049572900}
-    animationType: 5
-    targetType: 11
-    forcedTargetType: 0
-    useTargetAsV3: 0
-    endValueFloat: 1
-    endValueV3: {x: 0, y: 0, z: 0}
-    endValueV2: {x: 0, y: 0}
-    endValueColor: {r: 1, g: 1, b: 1, a: 1}
-    endValueString: 
-    endValueRect:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
-    endValueTransform: {fileID: 0}
-    optionalBool0: 1
-    optionalFloat0: 0
-    optionalInt0: 0
-    optionalRotationMode: 0
-    optionalScrambleMode: 0
-    optionalString: 
-    hasStart: 0
-    onStart:
-      m_PersistentCalls:
-        m_Calls: []
-    hasPlay: 0
-    onPlay:
-      m_PersistentCalls:
-        m_Calls: []
-    hasUpdate: 0
-    onUpdate:
-      m_PersistentCalls:
-        m_Calls: []
-    hasStepComplete: 0
-    onStepComplete:
-      m_PersistentCalls:
-        m_Calls: []
-    hasComplete: 0
-    onComplete:
-      m_PersistentCalls:
-        m_Calls: []
-    hasRewind: 0
-    onRewind:
-      m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 5919087658726400392}
+          m_MethodName: RewindEvent
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     hasCreated: 0
     onCreated:
       m_PersistentCalls:
@@ -456,8 +377,9 @@ MonoBehaviour:
     onCreated:
       m_PersistentCalls:
         m_Calls: []
-  enableSubId: 1
+  enableSubId: 0
   autoPlay: 0
+  playCount: -1
 --- !u!1 &2984024212096047983
 GameObject:
   m_ObjectHideFlags: 0

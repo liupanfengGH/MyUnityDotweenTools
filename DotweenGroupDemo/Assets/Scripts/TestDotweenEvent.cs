@@ -10,5 +10,5 @@ public class TestDotweenEvent : MonoBehaviour
     public void UpdateEvent() { Debug.Log("Update"); }
     public void StepCompleteEvent() { Debug.Log("StepComplete"); }
     public void CompleteEvent() { Debug.Log("Complete"); }
-    public void RewindEvent() { Debug.Log("Rewind"); }
+    public void RewindEvent() { Debug.Log("Rewind"); transform.localScale = Vector3.one; }
 }

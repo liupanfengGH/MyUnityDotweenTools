@@ -295,19 +295,21 @@ public class DotweenAnimationContrl : MonoBehaviour
 
     public void StopAnimation()
     {
-        _sequence.Rewind();
+        if (null != _sequence)
+        {
+            _sequence.Rewind();
+            _sequence.Kill();
+        }
     }
 
     public void StopAllAnimation()
     {
-        if (null != _sequence)
-        {
-            _sequence.Rewind();
-        }
+        StopAnimation();
 
-        foreach(var vk in _playingDict)
+        foreach (var vk in _playingDict)
         {
             vk.Value.Rewind();
+            vk.Value.Kill();
         }
         _playingDict.Clear();
     }
@@ -374,6 +376,7 @@ public class DotweenAnimationContrl : MonoBehaviour
         if(_playingDict.TryGetValue(idx,out var t))
         {
             t.Rewind();
+            t.Kill();
             _playingDict.Remove(idx);
         }
     }
