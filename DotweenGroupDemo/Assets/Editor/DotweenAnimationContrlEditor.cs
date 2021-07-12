@@ -1112,6 +1112,8 @@ public class DotweenAnimationContrlEditor : Editor
     }
     #endregion
 
+    private GameObject _selectGo;
+
     void OnEnable()
     {
         _tweens = serializedObject.FindProperty("animationList");
@@ -1128,6 +1130,11 @@ public class DotweenAnimationContrlEditor : Editor
         playIndex.Clear();
         BindAction();
 
+        if(target is DotweenAnimationContrl dac)
+        {
+            _selectGo = dac.gameObject;
+        }
+
         EditorApplication.update -= CheckFocused1;
         EditorApplication.update += CheckFocused1;
     }
@@ -1137,6 +1144,15 @@ public class DotweenAnimationContrlEditor : Editor
         if(!UnityEditorInternal.InternalEditorUtility.isApplicationActive)
         {
             ClearChangeGroup();
+        }
+
+        if(null == Selection.activeObject || Selection.activeObject != _selectGo)
+        {
+            if(_selectGo)
+            {
+                var dac = _selectGo.GetComponent<DotweenAnimationContrl>();
+                if (dac) dac.StopAllAnimation();
+            }
         }
     }
 
