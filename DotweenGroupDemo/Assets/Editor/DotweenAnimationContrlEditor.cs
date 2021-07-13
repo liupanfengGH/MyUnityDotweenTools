@@ -1303,14 +1303,19 @@ public class DotweenAnimationContrlEditor : Editor
                 GUIUtility.ExitGUI();
             }
 
-            GUILayout.Label(new GUIContent($"动画序列数量:{_tweens.arraySize}", "控制器中存在的所有动画序列数量"), GUILayout.Height(20f));            
+            GUILayout.Label(new GUIContent($"动画序列数量:{_tweens.arraySize}", "控制器中存在的所有动画序列数量"), GUILayout.Height(20f));
+            
+            EditorGUI.EndDisabledGroup();
 
             GUILayout.FlexibleSpace();
 
+            var vSo = serializedObject.FindProperty("autoPlay");
+
+            EditorGUI.BeginDisabledGroup(isPlaying || isPlayGroup || isPlayAll || vSo.boolValue);
             isOnPlayAnimationGroups = GUILayout.Toggle(isOnPlayAnimationGroups,palyGroups_txt, GUILayout.Height(20f));
-
             EditorGUI.EndDisabledGroup();
-
+            
+            EditorGUI.BeginDisabledGroup(vSo.boolValue);
             if (isOnPlayAnimationGroups)
             {
                 if (_aniDict.Count == 0)
@@ -1383,9 +1388,31 @@ public class DotweenAnimationContrlEditor : Editor
                 }
                 EditorGUI.EndDisabledGroup();
             }
+            EditorGUI.EndDisabledGroup();
+            GUILayout.EndHorizontal();
 
-           
+            GUILayout.BeginHorizontal();            
+            EditorGUI.BeginChangeCheck();
+            bool bNew = EditorGUILayout.ToggleLeft("自动播放", vSo.boolValue, GUILayout.Width(70f));
+            if(EditorGUI.EndChangeCheck())
+            {
+                vSo.boolValue = bNew;
+                serializedObject.ApplyModifiedProperties();
+            }
 
+            if(bNew)
+            {
+                vSo = serializedObject.FindProperty("playCount");
+                GUILayout.Label(new GUIContent("播放次数:","-1为无限次数"), GUILayout.Width(52f));
+                EditorGUI.BeginChangeCheck();
+                int iNew = EditorGUILayout.IntField(vSo.intValue,GUILayout.Width(25f));
+                if (EditorGUI.EndChangeCheck())
+                {
+                    vSo.intValue = iNew < -1 ? -1 : iNew == 0 ? 1 : iNew;
+                    serializedObject.ApplyModifiedProperties();
+                }
+                EditorGUILayout.Space();
+            }
             GUILayout.EndHorizontal();
 
             GUI.backgroundColor = Color.black;
@@ -1469,24 +1496,28 @@ public class DotweenAnimationContrlEditor : Editor
         isPlaying = playIndex.Contains(idx);
         
         EditorGUI.BeginDisabledGroup(isPlaying || isPlayAll || isPlayGroup);
-        
-        EditorGUILayout.BeginHorizontal();
+
+        var gId = sp.FindPropertyRelative("groupId");
+        var color = GetColor(gId.intValue);
+        var box = GUI.skin.box.Clone();
+        EditorGUILayout.BeginHorizontal(box);
 
         GUILayout.Space(10F);
         EditorGUI.BeginChangeCheck();
+        GUI.backgroundColor = color;
+        GUI.contentColor = color;
         openItemSetting[idx] = EditorGUILayout.Foldout(openItemSetting[idx], "动画序列组编号:", true);
-        if(EditorGUI.EndChangeCheck())
+        GUI.contentColor = Color.white;
+        if (EditorGUI.EndChangeCheck())
         {
             EditorPrefs.SetBool($"openItemSetting{idx}", openItemSetting[idx]);
         }
         GUILayout.Space(36f);
-
-        var gId = sp.FindPropertyRelative("groupId");
+        
         EditorGUI.BeginChangeCheck();
-        GUI.backgroundColor = GetColor(gId.intValue);
         int v = EditorGUILayout.IntField(gId.intValue, GUILayout.Width(30f));
         GUI.backgroundColor = Color.white;
-        if(EditorGUI.EndChangeCheck())
+        if (EditorGUI.EndChangeCheck())
         {
             _changeDict[idx] = v;
             isChange = true;
@@ -1529,7 +1560,9 @@ public class DotweenAnimationContrlEditor : Editor
 
         if (animationType != DotweenAnimationContrl.AnimationType.None)
         {
-            GUILayout.Label($"[{eName}]");
+            var clone = GUI.skin.label.Clone();
+            clone.richText = true;
+            GUILayout.Label($"<color='#009999'>[{eName}]</color>", clone);
         }
 
         GUILayout.FlexibleSpace();
@@ -1694,7 +1727,6 @@ public class DotweenAnimationContrlEditor : Editor
 
             return false;
         }
-
         EditorGUILayout.EndHorizontal();
 
         if (openItemSetting[idx])
@@ -1710,7 +1742,9 @@ public class DotweenAnimationContrlEditor : Editor
                 var so = sp.FindPropertyRelative("id");
                 GUILayout.Label("子序号:",GUILayout.Width(42f));
                 EditorGUI.BeginChangeCheck();
+                GUI.backgroundColor = Color.black;
                 int iV = EditorGUILayout.IntField(so.intValue, GUILayout.Width(20f));
+                GUI.backgroundColor = Color.white;
                 if (EditorGUI.EndChangeCheck())
                 {
                     so.intValue = iV;

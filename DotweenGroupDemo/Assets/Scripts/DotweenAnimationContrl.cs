@@ -195,6 +195,23 @@ public class DotweenAnimationContrl : MonoBehaviour
     /// 是否自动播放
     /// </summary>
     public bool autoPlay;
+    /// <summary>
+    ///自动播放 
+    /// </summary>
+    public int playCount;
+    /// <summary>
+    /// 运行时计算的播放次数
+    /// </summary>
+    private int runtimeCount;
+
+    void Start()
+    {
+        if (autoPlay)
+        {
+            runtimeCount = playCount;
+            AutoPlayAnimation();
+        }
+    }
 
     void OnEnable()
     {
@@ -204,6 +221,24 @@ public class DotweenAnimationContrl : MonoBehaviour
     void OnDisable()
     {
         
+    }
+
+
+    private void AutoPlayAnimation()
+    {
+        PlayAnimation();
+        if (runtimeCount > 0)
+        {
+            --runtimeCount;
+        }
+        _sequence.OnComplete(() =>
+        {
+            if (runtimeCount > 0 || runtimeCount == -1)
+            {
+                StopAnimation();
+                AutoPlayAnimation();
+            }
+        });
     }
 
     private Sequence _sequence;
