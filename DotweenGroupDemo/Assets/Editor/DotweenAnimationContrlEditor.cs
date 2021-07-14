@@ -1743,7 +1743,7 @@ public class DotweenAnimationContrlEditor : Editor
                 var so = sp.FindPropertyRelative("id");
                 GUILayout.Label("子序号:",GUILayout.Width(42f));
                 EditorGUI.BeginChangeCheck();
-                GUI.backgroundColor = Color.black;
+                GUI.backgroundColor = Color.gray;
                 int iV = EditorGUILayout.IntField(so.intValue, GUILayout.Width(20f));
                 GUI.backgroundColor = Color.white;
                 if (EditorGUI.EndChangeCheck())
