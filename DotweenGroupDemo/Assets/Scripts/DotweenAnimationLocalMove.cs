@@ -1,18 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class DotweenAnimationLocalMove : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public DotweenAnimationData animationData;
+
+    public bool autoPlay;
+
+    public int playCount = 1;
+
+    [NonSerialized]
+    private int runtimePlayCount;
+
+    void OnEnable()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnDisable()
     {
         
     }
+
+    public void Play()
+    {
+
+    }
+
+    public void Stop()
+    {
+
+    }
+
+
 }
