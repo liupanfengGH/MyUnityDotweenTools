@@ -9,11 +9,6 @@ public class DotweenAnimationLocalMove : MonoBehaviour
 
     public bool autoPlay;
 
-    public int playCount = 1;
-
-    [NonSerialized]
-    private int runtimePlayCount;
-
     void OnEnable()
     {
         

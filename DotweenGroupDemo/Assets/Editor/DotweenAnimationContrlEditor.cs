@@ -1391,7 +1391,8 @@ public class DotweenAnimationContrlEditor : Editor
             EditorGUI.EndDisabledGroup();
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal();            
+            GUILayout.BeginHorizontal();
+            EditorGUI.BeginDisabledGroup(isPlaying || isPlayGroup || isPlayAll);
             EditorGUI.BeginChangeCheck();
             bool bNew = EditorGUILayout.ToggleLeft("自动播放", vSo.boolValue, GUILayout.Width(70f),GUILayout.Height(18f));
             if(EditorGUI.EndChangeCheck())
@@ -1399,7 +1400,6 @@ public class DotweenAnimationContrlEditor : Editor
                 vSo.boolValue = bNew;
                 serializedObject.ApplyModifiedProperties();
             }
-
             if(bNew)
             {
                 vSo = serializedObject.FindProperty("playCount");
@@ -1413,6 +1413,7 @@ public class DotweenAnimationContrlEditor : Editor
                 }
                 EditorGUILayout.Space();
             }
+            EditorGUI.EndDisabledGroup();
             GUILayout.EndHorizontal();
 
             GUI.backgroundColor = Color.black;

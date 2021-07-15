@@ -4,15 +4,6 @@ using UnityEngine;
 
 public class DotweenAnimationMove : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public DotweenAnimationData animationData;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

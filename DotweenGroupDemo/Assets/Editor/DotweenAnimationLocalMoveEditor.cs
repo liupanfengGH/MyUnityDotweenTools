@@ -28,19 +28,6 @@ public class DotweenAnimationLocalMoveEditor : Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        if(bNew)
-        {
-            valueSo = serializedObject.FindProperty("playCount");
-            GUILayout.Label(new GUIContent("播放次数:","-1 无限循环"),GUILayout.Width(53f));
-            EditorGUI.BeginChangeCheck();
-            int iNew = EditorGUILayout.IntField(valueSo.intValue, GUILayout.Width(50f));
-            if(EditorGUI.EndChangeCheck())
-            {
-                valueSo.intValue = iNew < 0 ? -1 : iNew == 0 ? 1 : iNew;
-                serializedObject.ApplyModifiedProperties();
-            }
-        }
-
         GUILayout.FlexibleSpace();
 
         EditorGUI.BeginDisabledGroup(bNew);
