@@ -11,8 +11,12 @@ public class DotweenAnimationLocalMove : MonoBehaviour
     [NonSerialized]
     private Tween tween = null;
 
+    [NonSerialized]
+    private Vector3 defaultPos;
+
     void Start()
     {
+        defaultPos = transform.localPosition;
         if (autoPlay)
         {
             Play();
@@ -43,6 +47,12 @@ public class DotweenAnimationLocalMove : MonoBehaviour
             tween.Kill();
             tween = null;
         }
+
+        if(animationData.isFrom)
+        {
+            transform.localPosition = defaultPos;
+        }
+
     }
 
     private void CreateTween(DotweenAnimationData animationData)

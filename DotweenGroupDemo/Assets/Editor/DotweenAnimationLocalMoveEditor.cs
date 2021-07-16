@@ -63,12 +63,11 @@ public class DotweenAnimationLocalMoveEditor : Editor
         }
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndHorizontal();
+
+        EditorGUI.BeginDisabledGroup(_isPlay);
         DrawLocalMove(sp);
-        EditorGUILayout.BeginHorizontal(GUI.skin.box);
-
-        EditorGUILayout.EndHorizontal();
+        EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndVertical();
-
     }
 
     private void Duration(SerializedProperty sp)

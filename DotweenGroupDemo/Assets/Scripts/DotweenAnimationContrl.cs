@@ -186,7 +186,7 @@ public class DotweenAnimationContrl : MonoBehaviour
     /// </summary>
     public List<DotweenAnimationData> animationList;
 
-    private Dictionary<int, Tween> _playingDict = new Dictionary<int, Tween>();
+    private Dictionary<int, Tween> playingDict = new Dictionary<int, Tween>();
     /// <summary>
     /// 是否启用子模式
     /// </summary>
@@ -202,6 +202,7 @@ public class DotweenAnimationContrl : MonoBehaviour
     /// <summary>
     /// 运行时计算的播放次数
     /// </summary>
+    [NonSerialized]
     private int runtimeCount;
 
     void Start()
@@ -306,18 +307,18 @@ public class DotweenAnimationContrl : MonoBehaviour
     {
         StopAnimation();
 
-        foreach (var vk in _playingDict)
+        foreach (var vk in playingDict)
         {
             vk.Value.Rewind();
             vk.Value.Kill();
         }
-        _playingDict.Clear();
+        playingDict.Clear();
     }
 
     public void PlaySingleAnimation(int idx)
     {
        var tween = CreateTween(animationList[idx]);
-        _playingDict[idx] = tween;
+        playingDict[idx] = tween;
        tween.Play();
     }
 
@@ -373,11 +374,11 @@ public class DotweenAnimationContrl : MonoBehaviour
 
     public void StopSingleAnimation(int idx)
     {
-        if(_playingDict.TryGetValue(idx,out var t))
+        if(playingDict.TryGetValue(idx,out var t))
         {
             t.Rewind();
             t.Kill();
-            _playingDict.Remove(idx);
+            playingDict.Remove(idx);
         }
     }
 
