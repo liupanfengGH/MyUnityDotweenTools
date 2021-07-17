@@ -105,6 +105,15 @@ public class DotweenAnimationData
     public ScrambleMode optionalScrambleMode = ScrambleMode.None;    
     public string optionalString;
 
+    //作用对象组件的默认值 重置时为 从 时使用(运行时)
+    [NonSerialized] public float defulatValueFloat;
+    [NonSerialized] public Vector3 defulatValueV3;
+    [NonSerialized] public Vector2 defulatValueV2;
+    [NonSerialized] public Color defulatValueColor;
+    [NonSerialized] public string defulatValueString;
+    [NonSerialized] public Rect defulatValueRect;
+    [NonSerialized] public Quaternion defulatValueQuaternion;
+
     public bool hasStart;
     public UnityEvent onStart;
     public bool hasPlay;
@@ -300,6 +309,14 @@ public class DotweenAnimationContrl : MonoBehaviour
         {
             _sequence.Rewind();
             _sequence.Kill();
+
+            foreach (var fData in animationList)
+            {
+                if (fData.isFrom)
+                {
+                    ReSetFromDefaultValue(fData);
+                }
+            }
         }
     }
 
@@ -379,6 +396,7 @@ public class DotweenAnimationContrl : MonoBehaviour
             t.Rewind();
             t.Kill();
             playingDict.Remove(idx);
+            ReSetFromDefaultValue(animationList[idx]);
         }
     }
 
@@ -431,6 +449,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Transform tf)
                                         {
+                                           animationData.defulatValueV3 = tf.position;
                                            tween = tf.DOMove(endValueV3, animationData.duration, animationData.optionalBool0);
                                         }
                                     }
@@ -439,6 +458,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is RectTransform rtf)
                                         {
+                                            animationData.defulatValueV3 = rtf.anchoredPosition3D;
                                             tween = rtf.DOAnchorPos3D(endValueV3, animationData.duration, animationData.optionalBool0);
                                         }
                                     }
@@ -447,6 +467,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Rigidbody rb)
                                         {
+                                            animationData.defulatValueV3 = rb.position;
                                             tween = rb.DOMove(endValueV3, animationData.duration, animationData.optionalBool0);
                                         }
                                     }
@@ -455,6 +476,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Rigidbody2D rb2d)
                                         {
+                                            animationData.defulatValueV3 = rb2d.position;
                                             tween = rb2d.DOMove(endValueV3, animationData.duration, animationData.optionalBool0);
                                         }
                                     }
@@ -466,6 +488,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                     #region 局部移动
                     case AnimationType.LocalMove:
                         {
+                           animationData.defulatValueV3 = animationData.targetGO.transform.localPosition;
                            tween = animationData.targetGO.transform.DOLocalMove(animationData.endValueV3, animationData.duration, animationData.optionalBool0);
                         }
                         break;
@@ -479,6 +502,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Transform tf)
                                         {
+                                            animationData.defulatValueQuaternion = tf.rotation;
                                             tween = tf.DORotate(animationData.endValueV3, animationData.duration, animationData.optionalRotationMode);
                                         }
                                     }
@@ -487,6 +511,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Rigidbody rb)
                                         {
+                                            animationData.defulatValueQuaternion = rb.rotation;
                                             tween = rb.DORotate(animationData.endValueV3, animationData.duration, animationData.optionalRotationMode);
                                         }
                                     }
@@ -495,6 +520,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Rigidbody2D rb2d)
                                         {
+                                            animationData.defulatValueFloat = rb2d.rotation;
                                             tween = rb2d.DORotate(animationData.endValueFloat, animationData.duration);
                                         }
                                     }
@@ -506,6 +532,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                     #region 局部旋转
                     case AnimationType.LocalRotate:
                         {
+                            animationData.defulatValueQuaternion = animationData.targetGO.transform.localRotation;
                             tween = animationData.targetGO.transform.DOLocalRotate(animationData.endValueV3, animationData.duration, animationData.optionalRotationMode);
                         }
                         break;
@@ -513,11 +540,12 @@ public class DotweenAnimationContrl : MonoBehaviour
                     #region 缩放
                     case AnimationType.Scale:
                         {
+                            animationData.defulatValueV3 = animationData.targetGO.transform.localScale;
                             tween = animationData.targetGO.transform.DOScale(animationData.optionalBool0 ? new Vector3(animationData.endValueFloat, animationData.endValueFloat, animationData.endValueFloat) : animationData.endValueV3, animationData.duration);
                         }
                         break;
                     #endregion
-                    #region 跳(抛物线?)
+                    #region 跳(抛物线)
                     case AnimationType.Jump:
                         {
                             switch (animationData.targetType) 
@@ -526,6 +554,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if (animationData.target is Transform tf)
                                         {
+                                            animationData.defulatValueV3 = tf.position;
                                             tween = tf.DOJump(animationData.endValueV3, animationData.optionalFloat0, animationData.optionalInt0, animationData.duration, animationData.optionalBool0);
                                         }
                                     }
@@ -534,6 +563,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is RectTransform rtf)
                                         {
+                                            animationData.defulatValueV3 = rtf.anchoredPosition;
                                             tween = rtf.DOJumpAnchorPos(animationData.endValueV3, animationData.optionalFloat0, animationData.optionalInt0, animationData.duration, animationData.optionalBool0);
                                         }
                                     }
@@ -547,6 +577,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                         {
                             if(animationData.target is RectTransform rtf)
                             {
+                               animationData.defulatValueV2 = rtf.sizeDelta;
                                tween = rtf.DOSizeDelta(animationData.optionalBool0 ? new Vector2(animationData.endValueFloat, animationData.endValueFloat) : animationData.endValueV2, animationData.duration);
                             }
                         }
@@ -561,6 +592,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Renderer r)
                                         {
+                                            animationData.defulatValueColor = r.material.color;
                                             tween = r.material.DOColor(animationData.endValueColor, animationData.duration);
                                         }
                                     }
@@ -569,6 +601,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Light l)
                                         {
+                                            animationData.defulatValueColor = l.color;
                                             tween = l.DOColor(animationData.endValueColor, animationData.duration);
                                         }
                                     }
@@ -577,6 +610,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is SpriteRenderer sp)
                                         {
+                                            animationData.defulatValueColor = sp.color;
                                             tween = sp.DOColor(animationData.endValueColor, animationData.duration);
                                         }
                                     }
@@ -585,6 +619,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is UnityEngine.UI.Graphic g)
                                         {
+                                            animationData.defulatValueColor = g.color;
                                             tween = g.DOColor(animationData.endValueColor, animationData.duration);
                                         }
                                     }
@@ -593,6 +628,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is UnityEngine.UI.Text t)
                                         {
+                                            animationData.defulatValueColor = t.color;
                                             tween = t.DOColor(animationData.endValueColor, animationData.duration);
                                         }
                                     }
@@ -610,6 +646,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Renderer r)
                                         {
+                                            animationData.defulatValueFloat = r.material.color.a;
                                             tween = r.material.DOFade(animationData.endValueFloat, animationData.duration);
                                         }
                                     }
@@ -618,6 +655,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Light l)
                                         {
+                                            animationData.defulatValueFloat = l.intensity;
                                             tween = l.DOIntensity(animationData.endValueFloat, animationData.duration);
                                         }
                                     }
@@ -626,6 +664,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is SpriteRenderer sp)
                                         {
+                                            animationData.defulatValueFloat = sp.material.color.a;
                                             tween = sp.DOFade(animationData.endValueFloat, animationData.duration);
                                         }
                                     }
@@ -634,6 +673,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is UnityEngine.UI.Graphic g)
                                         {
+                                            animationData.defulatValueFloat = g.color.a;
                                             tween = g.DOFade(animationData.endValueFloat, animationData.duration);
                                         }
                                     }
@@ -642,6 +682,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is UnityEngine.UI.Text t)
                                         {
+                                            animationData.defulatValueFloat = t.color.a;
                                             tween = t.DOFade(animationData.endValueFloat, animationData.duration);
                                         }
                                     }
@@ -650,6 +691,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is CanvasGroup cg)
                                         {
+                                            animationData.defulatValueFloat = cg.alpha;
                                             tween = cg.DOFade(animationData.endValueFloat, animationData.duration);
                                         }
                                     }
@@ -663,6 +705,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                         {
                             if(animationData.target is UnityEngine.UI.Text t)
                             {
+                                animationData.defulatValueString = t.text;
                                 tween = t.DOText(animationData.endValueString, animationData.duration, animationData.optionalBool0, animationData.optionalScrambleMode, animationData.optionalString);
                             }
                         }
@@ -677,6 +720,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Transform tf)
                                         {
+                                            animationData.defulatValueV3 = tf.localPosition;
                                             tween = tf.DOPunchPosition(animationData.endValueV3, animationData.duration, animationData.optionalInt0, animationData.optionalFloat0, animationData.optionalBool0);
                                         }
                                     }
@@ -685,6 +729,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is RectTransform rtf)
                                         {
+                                            animationData.defulatValueV2 = rtf.anchoredPosition;
                                             tween = rtf.DOPunchAnchorPos(animationData.endValueV2, animationData.duration, animationData.optionalInt0, animationData.optionalFloat0, animationData.optionalBool0);
                                         }
                                     }
@@ -696,6 +741,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                     #region 猛烈缩放
                     case AnimationType.PunchScale:
                         {
+                            animationData.defulatValueV3 = animationData.targetGO.transform.localScale;
                             tween = animationData.targetGO.transform.DOPunchScale(animationData.endValueV3, animationData.duration, animationData.optionalInt0, animationData.optionalFloat0);
                         }
                         break;
@@ -703,6 +749,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                     #region 猛烈旋转
                     case AnimationType.PunchRotation:
                         {
+                            animationData.defulatValueQuaternion = animationData.targetGO.transform.localRotation;
                             tween = animationData.targetGO.transform.DOPunchRotation(animationData.endValueV3, animationData.duration, animationData.optionalInt0, animationData.optionalFloat0);
                         }
                         break;
@@ -716,6 +763,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is Transform tf)
                                         {
+                                            animationData.defulatValueV3 = tf.localPosition;
                                             tween = tf.DOShakePosition(animationData.duration, animationData.endValueV3, animationData.optionalInt0, animationData.optionalFloat0, animationData.optionalBool0);
                                         }
                                     }
@@ -724,6 +772,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                                     {
                                         if(animationData.target is RectTransform rtf)
                                         {
+                                            animationData.defulatValueV3 = rtf.localPosition;
                                             tween = rtf.DOShakePosition(animationData.duration, animationData.endValueV3, animationData.optionalInt0, animationData.optionalFloat0, animationData.optionalBool0);
                                         }
                                     }
@@ -735,6 +784,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                     #region 抖动缩放
                     case AnimationType.ShakeScale:
                         {
+                            animationData.defulatValueV3 = animationData.targetGO.transform.localScale;
                             tween = animationData.targetGO.transform.DOShakeScale(animationData.duration, animationData.endValueV3, animationData.optionalInt0, animationData.optionalFloat0);
                         }
                         break;
@@ -742,6 +792,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                     #region 抖动旋转
                     case AnimationType.ShakeRotation:
                         {
+                            animationData.defulatValueQuaternion = animationData.targetGO.transform.localRotation;
                             tween = animationData.targetGO.transform.DOShakeRotation(animationData.duration, animationData.endValueV3, animationData.optionalInt0, animationData.optionalFloat0);
                         }
                         break;
@@ -751,6 +802,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                         {
                             if(animationData.target is Camera c)
                             {
+                                animationData.defulatValueFloat = c.aspect;
                                 tween = c.DOAspect(animationData.endValueFloat, animationData.duration);
                             }
                         }
@@ -759,6 +811,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                         {
                             if (animationData.target is Camera c)
                             {
+                                animationData.defulatValueColor = c.backgroundColor;
                                 tween = c.DOColor(animationData.endValueColor, animationData.duration);
                             }
                         }
@@ -767,6 +820,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                         {
                             if (animationData.target is Camera c)
                             {
+                                animationData.defulatValueFloat = c.fieldOfView;
                                 tween = c.DOFieldOfView(animationData.endValueFloat, animationData.duration);
                             }
                         }
@@ -775,6 +829,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                         {
                             if (animationData.target is Camera c)
                             {
+                                animationData.defulatValueFloat = c.orthographicSize;
                                 tween = c.DOOrthoSize(animationData.endValueFloat, animationData.duration);
                             }
                         }
@@ -783,6 +838,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                         {
                             if (animationData.target is Camera c)
                             {
+                                animationData.defulatValueRect = c.pixelRect;
                                 tween = c.DOPixelRect(animationData.endValueRect, animationData.duration);
                             }
                         }
@@ -791,6 +847,7 @@ public class DotweenAnimationContrl : MonoBehaviour
                         {
                             if (animationData.target is Camera c)
                             {
+                                animationData.defulatValueRect = c.rect;
                                 tween = c.DORect(animationData.endValueRect, animationData.duration);
                             }
                         }
@@ -876,6 +933,390 @@ public class DotweenAnimationContrl : MonoBehaviour
         }
 
         return tween;
+    }
+
+    private void ReSetFromDefaultValue(DotweenAnimationData animationData)
+    {
+        if (null == animationData) return;
+
+        switch (animationData.animationType)
+        {
+            #region 移动
+            case AnimationType.Move:
+                {
+                    switch (animationData.targetType)
+                    {
+                        case TargetType.Transform:
+                            {
+                                if (animationData.target is Transform tf)
+                                {
+                                    tf.position = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                        case TargetType.RectTransform:
+                            {
+                                if (animationData.target is RectTransform rtf)
+                                {
+                                    rtf.anchoredPosition3D = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                        case TargetType.Rigidbody:
+                            {
+                                if (animationData.target is Rigidbody rb)
+                                {
+                                    rb.position = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                        case TargetType.Rigidbody2D:
+                            {
+                                if (animationData.target is Rigidbody2D rb2d)
+                                {
+                                    rb2d.position = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                    }
+                }
+                break;
+            #endregion
+            #region 局部移动
+            case AnimationType.LocalMove:
+                {
+                    animationData.targetGO.transform.localPosition = animationData.defulatValueV3;
+                }
+                break;
+            #endregion
+            #region 旋转
+            case AnimationType.Rotate:
+                {
+                    switch (animationData.targetType)
+                    {
+                        case TargetType.Transform:
+                            {
+                                if (animationData.target is Transform tf)
+                                {
+                                     tf.rotation = animationData.defulatValueQuaternion;
+                                }
+                            }
+                            break;
+                        case TargetType.Rigidbody:
+                            {
+                                if (animationData.target is Rigidbody rb)
+                                {
+                                    rb.rotation = animationData.defulatValueQuaternion;
+                                }
+                            }
+                            break;
+                        case TargetType.Rigidbody2D:
+                            {
+                                if (animationData.target is Rigidbody2D rb2d)
+                                {
+                                    rb2d.rotation = animationData.defulatValueFloat;
+                                }
+                            }
+                            break;
+                    }
+                }
+                break;
+            #endregion
+            #region 局部旋转
+            case AnimationType.LocalRotate:
+                {
+                    animationData.targetGO.transform.localRotation = animationData.defulatValueQuaternion;
+                }
+                break;
+            #endregion
+            #region 缩放
+            case AnimationType.Scale:
+                {
+                    animationData.targetGO.transform.localScale = animationData.defulatValueV3;
+                }
+                break;
+            #endregion
+            #region 跳(抛物线)
+            case AnimationType.Jump:
+                {
+                    switch (animationData.targetType)
+                    {
+                        case TargetType.Transform:
+                            {
+                                if (animationData.target is Transform tf)
+                                {
+                                    tf.position = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                        case TargetType.RectTransform:
+                            {
+                                if (animationData.target is RectTransform rtf)
+                                {
+                                    rtf.anchoredPosition = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                    }
+                }
+                break;
+            #endregion
+            #region UGUI UI元素宽高
+            case AnimationType.UIWidthHeight:
+                {
+                    if (animationData.target is RectTransform rtf)
+                    {
+                        rtf.sizeDelta = animationData.defulatValueV2;
+                    }
+                }
+                break;
+            #endregion
+            #region 颜色
+            case AnimationType.Color:
+                {
+                    switch (animationData.targetType)
+                    {
+                        case TargetType.Renderer:
+                            {
+                                if (animationData.target is Renderer r)
+                                {
+                                    r.material.color = animationData.defulatValueColor;
+                                }
+                            }
+                            break;
+                        case TargetType.Light:
+                            {
+                                if (animationData.target is Light l)
+                                {
+                                    l.color = animationData.defulatValueColor;
+                                }
+                            }
+                            break;
+                        case TargetType.SpriteRenderer:
+                            {
+                                if (animationData.target is SpriteRenderer sp)
+                                {
+                                    sp.color = animationData.defulatValueColor;
+                                }
+                            }
+                            break;
+                        case TargetType.Image:
+                            {
+                                if (animationData.target is UnityEngine.UI.Graphic g)
+                                {
+                                    g.color = animationData.defulatValueColor;
+                                }
+                            }
+                            break;
+                        case TargetType.Text:
+                            {
+                                if (animationData.target is UnityEngine.UI.Text t)
+                                {
+                                    t.color = animationData.defulatValueColor;
+                                }
+                            }
+                            break;
+                    }
+                }
+                break;
+            #endregion
+            #region 渐变
+            case AnimationType.Fade:
+                {
+                    switch (animationData.targetType)
+                    {
+                        case TargetType.Renderer:
+                            {
+                                if (animationData.target is Renderer r)
+                                {
+                                    r.material.color = new Color(r.material.color.r, r.material.color.g, r.material.color.b,animationData.defulatValueFloat);
+                                }
+                            }
+                            break;
+                        case TargetType.Light:
+                            {
+                                if (animationData.target is Light l)
+                                {
+                                    l.intensity = animationData.defulatValueFloat;
+                                }
+                            }
+                            break;
+                        case TargetType.SpriteRenderer:
+                            {
+                                if (animationData.target is SpriteRenderer sp)
+                                {
+                                    sp.material.color = new Color(sp.material.color.r, sp.material.color.g, sp.material.color.b, animationData.defulatValueFloat);
+                                }
+                            }
+                            break;
+                        case TargetType.Image:
+                            {
+                                if (animationData.target is UnityEngine.UI.Graphic g)
+                                {
+                                    g.color = new Color(g.color.r, g.color.g, g.color.b, animationData.defulatValueFloat);
+                                }
+                            }
+                            break;
+                        case TargetType.Text:
+                            {
+                                if (animationData.target is UnityEngine.UI.Text t)
+                                {
+                                    t.color = new Color(t.color.r, t.color.g, t.color.b, animationData.defulatValueFloat);
+                                }
+                            }
+                            break;
+                        case TargetType.CanvasGroup:
+                            {
+                                if (animationData.target is CanvasGroup cg)
+                                {
+                                    cg.alpha = animationData.defulatValueFloat;
+                                }
+                            }
+                            break;
+                    }
+                }
+                break;
+            #endregion
+            #region 文本
+            case AnimationType.Text:
+                {
+                    if (animationData.target is UnityEngine.UI.Text t)
+                    {
+                        t.text = animationData.defulatValueString;
+                    }
+                }
+                break;
+            #endregion
+            #region 猛烈位移
+            case AnimationType.PunchPosition:
+                {
+                    switch (animationData.targetType)
+                    {
+                        case TargetType.Transform:
+                            {
+                                if (animationData.target is Transform tf)
+                                {
+                                    tf.localPosition = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                        case TargetType.RectTransform:
+                            {
+                                if (animationData.target is RectTransform rtf)
+                                {
+                                    rtf.anchoredPosition = animationData.defulatValueV2;
+                                }
+                            }
+                            break;
+                    }
+                }
+                break;
+            #endregion
+            #region 猛烈缩放
+            case AnimationType.PunchScale:
+                {
+                    animationData.targetGO.transform.localScale = animationData.defulatValueV3;
+                }
+                break;
+            #endregion
+            #region 猛烈旋转
+            case AnimationType.PunchRotation:
+                {
+                    animationData.targetGO.transform.localRotation = animationData.defulatValueQuaternion;
+                }
+                break;
+            #endregion
+            #region 抖动位移
+            case AnimationType.ShakePostion:
+                {
+                    switch (animationData.targetType)
+                    {
+                        case TargetType.Transform:
+                            {
+                                if (animationData.target is Transform tf)
+                                {
+                                    tf.localPosition = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                        case TargetType.RectTransform:
+                            {
+                                if (animationData.target is RectTransform rtf)
+                                {
+                                    rtf.localPosition = animationData.defulatValueV3;
+                                }
+                            }
+                            break;
+                    }
+                }
+                break;
+            #endregion
+            #region 抖动缩放
+            case AnimationType.ShakeScale:
+                {
+                    animationData.targetGO.transform.localScale = animationData.defulatValueV3; ;
+                }
+                break;
+            #endregion
+            #region 抖动旋转
+            case AnimationType.ShakeRotation:
+                {
+                    animationData.targetGO.transform.localRotation = animationData.defulatValueQuaternion;
+                }
+                break;
+            #endregion
+            #region 摄像机部分
+            case AnimationType.CameraAspect:
+                {
+                    if (animationData.target is Camera c)
+                    {
+                        c.aspect = animationData.defulatValueFloat;
+                    }
+                }
+                break;
+            case AnimationType.CameraBackgroundColor:
+                {
+                    if (animationData.target is Camera c)
+                    {
+                        c.backgroundColor = animationData.defulatValueColor;
+                    }
+                }
+                break;
+            case AnimationType.CameraFieldOfView:
+                {
+                    if (animationData.target is Camera c)
+                    {
+                        c.fieldOfView = animationData.defulatValueFloat;
+                    }
+                }
+                break;
+            case AnimationType.CameraOrthoSize:
+                {
+                    if (animationData.target is Camera c)
+                    {
+                        c.orthographicSize = animationData.defulatValueFloat;
+                    }
+                }
+                break;
+            case AnimationType.CameraPixelRect:
+                {
+                    if (animationData.target is Camera c)
+                    {
+                        c.pixelRect = animationData.defulatValueRect;
+                    }
+                }
+                break;
+            case AnimationType.CameraRect:
+                {
+                    if (animationData.target is Camera c)
+                    {
+                        c.rect = animationData.defulatValueRect;
+                    }
+                }
+                break;
+                #endregion
+        }
+
     }
 
     /// <summary>

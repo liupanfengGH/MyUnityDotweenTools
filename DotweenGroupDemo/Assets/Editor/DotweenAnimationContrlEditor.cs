@@ -2040,7 +2040,7 @@ public class DotweenAnimationContrlEditor : Editor
     {
         var valueSo = sp.FindPropertyRelative("isFrom");
         EditorGUI.BeginDisabledGroup(disableBtnSwith);
-        if (GUILayout.Button(new GUIContent(valueSo.boolValue ? "从" : "到","注意:使用<从>需手动重置相关参数的初始值.可使用Rewind回调接收处理"), GUILayout.Width(80f)))
+        if (GUILayout.Button(new GUIContent(valueSo.boolValue ? "从" : "到"), GUILayout.Width(80f)))
         {
             valueSo.boolValue = !valueSo.boolValue;
             serializedObject.ApplyModifiedProperties();
