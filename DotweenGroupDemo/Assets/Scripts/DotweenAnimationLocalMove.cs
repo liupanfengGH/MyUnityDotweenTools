@@ -11,12 +11,8 @@ public class DotweenAnimationLocalMove : MonoBehaviour
     [NonSerialized]
     private Tween tween = null;
 
-    [NonSerialized]
-    private Vector3 defaultPos;
-
     void Start()
     {
-        defaultPos = transform.localPosition;
         if (autoPlay)
         {
             Play();
@@ -46,17 +42,16 @@ public class DotweenAnimationLocalMove : MonoBehaviour
             tween.Rewind();
             tween.Kill();
             tween = null;
+            if (animationData.isFrom)
+            {
+                transform.localPosition = animationData.defulatValueV3;
+            }
         }
-
-        if(animationData.isFrom)
-        {
-            transform.localPosition = defaultPos;
-        }
-
     }
 
     private void CreateTween(DotweenAnimationData animationData)
     {
+        animationData.defulatValueV3 = transform.localPosition;
         tween = transform.DOLocalMove(animationData.endValueV3, animationData.duration, animationData.optionalBool0);
 
         if (null != tween)
