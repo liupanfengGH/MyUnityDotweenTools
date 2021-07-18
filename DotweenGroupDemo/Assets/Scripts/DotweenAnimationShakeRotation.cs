@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DotweenAnimationShakeRotation : MonoBehaviour
+public class DotweenAnimationShakeRotation : DotweenAnimationBase
 {
-    // Start is called before the first frame update
-    void Start()
+    protected override void FromProcess()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void StopPostProcess()
     {
-        
+
+    }
+
+    protected override void TweenBehaviour()
+    {
+
     }
 }

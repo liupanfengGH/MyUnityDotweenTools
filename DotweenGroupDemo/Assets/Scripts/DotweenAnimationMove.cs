@@ -1,7 +1,19 @@
 ﻿using UnityEngine;
 
-public class DotweenAnimationMove : MonoBehaviour
+public class DotweenAnimationMove : DotweenAnimationBase
 {
-    public DotweenAnimationData animationData;
+    protected override void FromProcess()
+    {
 
+    }
+
+    protected override void StopPostProcess()
+    {
+
+    }
+
+    protected override void TweenBehaviour()
+    {
+
+    }
 }
