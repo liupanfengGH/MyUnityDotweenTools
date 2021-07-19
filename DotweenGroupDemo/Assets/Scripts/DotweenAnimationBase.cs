@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using System;
 using UnityEngine;
+using static DotweenAnimationContrl;
 
 public abstract class DotweenAnimationBase : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public abstract class DotweenAnimationBase : MonoBehaviour
 
     [NonSerialized]
     protected Tween tween = null;
+
+    [NonSerialized]
+    protected TargetType targetType = TargetType.Unset;
 
     void Start()
     {
@@ -27,6 +31,13 @@ public abstract class DotweenAnimationBase : MonoBehaviour
 
     protected virtual void CreateTween()
     {
+        targetType = animationData.targetType;
+
+        if (animationData.forcedTargetType != TargetType.Unset)
+        {
+            targetType = animationData.forcedTargetType;
+        }
+
         TweenBehaviour();
         TweenSetValue();
         TweenEvents();
@@ -114,6 +125,7 @@ public abstract class DotweenAnimationBase : MonoBehaviour
             tween.Rewind();
             tween.Kill();
             tween = null;
+            targetType = TargetType.Unset;
             StopPostProcess();
         }
     }

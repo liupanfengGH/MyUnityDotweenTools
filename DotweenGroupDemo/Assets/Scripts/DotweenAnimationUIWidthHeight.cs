@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using DG.Tweening;
 using UnityEngine;
 
 public class DotweenAnimationUIWidthHeight : DotweenAnimationBase
@@ -11,16 +10,25 @@ public class DotweenAnimationUIWidthHeight : DotweenAnimationBase
 
     protected override void FromProcess()
     {
-        
+        if (animationData.target is RectTransform rtf)
+        {
+            animationData.defulatValueV2 = rtf.sizeDelta;
+        }
     }
 
     protected override void StopPostProcess()
     {
-        
+        if (animationData.target is RectTransform rtf)
+        {
+            rtf.sizeDelta = animationData.defulatValueV2;
+        }
     }
 
     protected override void TweenBehaviour()
     {
-        
+        if (animationData.target is RectTransform rtf)
+        {
+            tween = rtf.DOSizeDelta(animationData.optionalBool0 ? new Vector2(animationData.endValueFloat, animationData.endValueFloat) : animationData.endValueV2, animationData.duration);
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using DG.Tweening;
 
 public class DotweenAnimationText : DotweenAnimationBase
 {
@@ -11,16 +9,25 @@ public class DotweenAnimationText : DotweenAnimationBase
 
     protected override void FromProcess()
     {
-
+        if (animationData.target is UnityEngine.UI.Text t)
+        {
+            animationData.defulatValueString = t.text;
+        }
     }
 
     protected override void StopPostProcess()
     {
-
+        if (animationData.target is UnityEngine.UI.Text t)
+        {
+            t.text = animationData.defulatValueString;
+        }
     }
 
     protected override void TweenBehaviour()
     {
-
+        if (animationData.target is UnityEngine.UI.Text t)
+        {
+            tween = t.DOText(animationData.endValueString, animationData.duration, animationData.optionalBool0, animationData.optionalScrambleMode, animationData.optionalString);
+        }
     }
 }

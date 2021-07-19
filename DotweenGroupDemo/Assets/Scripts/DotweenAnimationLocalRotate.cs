@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using DG.Tweening;
 
 public class DotweenAnimationLocalRotate : DotweenAnimationBase
 {
@@ -11,16 +9,16 @@ public class DotweenAnimationLocalRotate : DotweenAnimationBase
 
     protected override void FromProcess()
     {
-
+        animationData.defulatValueQuaternion = animationData.targetGO.transform.localRotation;
     }
 
     protected override void StopPostProcess()
     {
-
+        animationData.targetGO.transform.localRotation = animationData.defulatValueQuaternion;
     }
 
     protected override void TweenBehaviour()
     {
-
+        tween = animationData.targetGO.transform.DOLocalRotate(animationData.endValueV3, animationData.duration, animationData.optionalRotationMode);
     }
 }
