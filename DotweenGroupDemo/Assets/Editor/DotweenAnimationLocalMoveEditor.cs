@@ -20,9 +20,11 @@ public class DotweenAnimationLocalMoveEditor : Editor
 
     private void EventNames()
     {
-        _toggleEventNames = new string[] { "hasStart", "hasPlay", "hasUpdate", "hasStepComplete", "hasComplete", "hasRewind", "hasCreated" };
-        _eventNames = new string[] { "onStart", "onPlay", "onUpdate", "onStepComplete", "onComplete", "onRewind", "onCreated" };
-        _eventButtonNames = new string[] { "启动事件", "播放事件", "更新事件", "步长事件", "完成事件", "重置事件", "创建事件" };
+        _easeNames = DotweenAnimationEditorUtility.EASE_NAMES;
+        _loopTypeNames = DotweenAnimationEditorUtility.LOOP_TYPE_NAMES;
+        _toggleEventNames = DotweenAnimationEditorUtility.TOGGLE_EVENT_NAMES;
+        _eventNames = DotweenAnimationEditorUtility.EVENT_NAMES;
+        _eventButtonNames = DotweenAnimationEditorUtility.EVENT_BUTTON_NAMES;
     }
 
     public override void OnInspectorGUI()
@@ -129,12 +131,6 @@ public class DotweenAnimationLocalMoveEditor : Editor
         GUILayout.Label("缓动方式:", GUILayout.Width(55f));
 
         var valueSo = sp.FindPropertyRelative("easeType");
-
-        if (null == _easeNames || _easeNames.Length == 0)
-        {
-            _easeNames = Enum.GetNames(typeof(Ease));
-        }
-
         EditorGUI.BeginChangeCheck();
         var eNewValue = EditorGUILayout.Popup(valueSo.enumValueIndex, _easeNames);
         if (EditorGUI.EndChangeCheck())
@@ -194,12 +190,6 @@ public class DotweenAnimationLocalMoveEditor : Editor
         if (iNewValue > 1 || iNewValue == -1)
         {
             EditorGUILayout.BeginHorizontal();
-
-            if (null == _loopTypeNames || _loopTypeNames.Length == 0)
-            {
-                _loopTypeNames = Enum.GetNames(typeof(LoopType));
-            }
-
             GUILayout.Space(10f);
             GUILayout.Label("循环方式:", GUILayout.Width(55f));
             var valueSo = sp.FindPropertyRelative("loopType");
@@ -218,7 +208,7 @@ public class DotweenAnimationLocalMoveEditor : Editor
     {
         var valueSo = sp.FindPropertyRelative("isFrom");
         EditorGUI.BeginDisabledGroup(disableBtnSwith);
-        if (GUILayout.Button(new GUIContent(valueSo.boolValue ? "从" : "到", "注意:使用<从>需手动重置相关参数的初始值.可使用Rewind回调接收处理"), GUILayout.Width(80f)))
+        if (GUILayout.Button(new GUIContent(valueSo.boolValue ? "从" : "到"),GUILayout.Width(80f)))
         {
             valueSo.boolValue = !valueSo.boolValue;
             serializedObject.ApplyModifiedProperties();

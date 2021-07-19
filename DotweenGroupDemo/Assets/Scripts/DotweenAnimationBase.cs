@@ -36,9 +36,9 @@ public abstract class DotweenAnimationBase : MonoBehaviour
 
     protected virtual void TweenSetValue()
     {
+        FromProcess();
         if (animationData.isFrom)
         {
-            FromProcess();
             var tweener = tween as Tweener;
             if (null != tweener)
             {

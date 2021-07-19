@@ -9,20 +9,6 @@ using UnityEngine.UI;
 [CustomEditor(typeof(DotweenAnimationContrl))]
 public class DotweenAnimationContrlEditor : Editor
 {
-    private enum GUIContentKey
-    {
-        Scale,
-        RichText,
-        Snapping,
-        PunchVibrato,
-        PunchElasticity,
-        ShakeVibrato,
-        ShakeRandomness, 
-        Jump,
-        JumpPower,
-        JumpsNum
-    }
-
     private SerializedProperty _tweens;
 
     private string[] _tweensName, _easeNames, _loopTypeNames, _toggleEventNames, _eventNames,_eventButtonNames,_rotationNames,_scrambleNames;
@@ -31,22 +17,7 @@ public class DotweenAnimationContrlEditor : Editor
 
     private Dictionary<DotweenAnimationContrl.AnimationType, Action<SerializedProperty>> _actionDict = new Dictionary<DotweenAnimationContrl.AnimationType, Action<SerializedProperty>>();
 
-    private Dictionary<GUIContentKey, GUIContent> _contentDict = new Dictionary<GUIContentKey, GUIContent>()
-    {
-        { GUIContentKey.Scale,new GUIContent("等比:", "如果为TRUE，数据都是等比值") },
-        { GUIContentKey.RichText,new GUIContent("启用富文本:") },
-        { GUIContentKey.Snapping,new GUIContent("折断:", "如果为TRUE，tween将平滑地将所有值转换为整数") },
-        { GUIContentKey.PunchVibrato,new GUIContent("力度:", "力度大小") },
-        { GUIContentKey.PunchElasticity,new GUIContent("回弹:", "向后弹跳时，向量会超出起始位置多少") },
-        { GUIContentKey.ShakeVibrato,new GUIContent("震动:", "振动的大小") },
-        { GUIContentKey.ShakeRandomness,new GUIContent("随机性:", "振动的随机范围") },
-        { GUIContentKey.Jump,new GUIContent("取整:", "是否使用小数值") },
-        { GUIContentKey.JumpPower,new GUIContent("跳力度:") },
-        { GUIContentKey.JumpsNum,new GUIContent("跳次数:") }
-    };
-
     #region 动画类型绘制部分
-
     private void DrawJump(SerializedProperty sp)
     {
         EditorGUILayout.BeginHorizontal();
@@ -1209,9 +1180,11 @@ public class DotweenAnimationContrlEditor : Editor
 
     private void EventNames()
     {
-        _toggleEventNames = new string[] { "hasStart", "hasPlay", "hasUpdate", "hasStepComplete", "hasComplete", "hasRewind", "hasCreated" };
-        _eventNames = new string[] { "onStart", "onPlay", "onUpdate", "onStepComplete", "onComplete", "onRewind", "onCreated" };
-        _eventButtonNames = new string[] { "启动事件", "播放事件", "更新事件", "步长事件", "完成事件", "重置事件", "创建事件" };
+        _easeNames = DotweenAnimationEditorUtility.EASE_NAMES;
+        _loopTypeNames = DotweenAnimationEditorUtility.LOOP_TYPE_NAMES;
+        _toggleEventNames = DotweenAnimationEditorUtility.TOGGLE_EVENT_NAMES;
+        _eventNames = DotweenAnimationEditorUtility.EVENT_NAMES;
+        _eventButtonNames = DotweenAnimationEditorUtility.EVENT_BUTTON_NAMES;
     }
 
     private GUIContent create_txt = new GUIContent("创建");
@@ -1956,15 +1929,8 @@ public class DotweenAnimationContrlEditor : Editor
 
     private int EaseType(SerializedProperty sp)
     {
-        GUILayout.Label("缓动方式:", GUILayout.Width(55f));
-        
+        GUILayout.Label("缓动方式:", GUILayout.Width(55f));  
         var valueSo = sp.FindPropertyRelative("easeType");
-
-        if (null == _easeNames || _easeNames.Length == 0)
-        {
-            _easeNames = Enum.GetNames(typeof(Ease));
-        }
-
         EditorGUI.BeginChangeCheck();
         var eNewValue = EditorGUILayout.Popup(valueSo.enumValueIndex, _easeNames);
         if (EditorGUI.EndChangeCheck())
@@ -2024,12 +1990,6 @@ public class DotweenAnimationContrlEditor : Editor
         if (iNewValue > 1 || iNewValue == -1)
         {
             EditorGUILayout.BeginHorizontal();
-
-            if (null == _loopTypeNames || _loopTypeNames.Length == 0)
-            {
-                _loopTypeNames = Enum.GetNames(typeof(LoopType));
-            }
-
             GUILayout.Space(10f);
             GUILayout.Label("循环方式:", GUILayout.Width(55f));
             var valueSo = sp.FindPropertyRelative("loopType");
@@ -2228,7 +2188,7 @@ public class DotweenAnimationContrlEditor : Editor
 
     private void OptionalInt0(SerializedProperty sp,GUIContentKey key,float width,int minValue,int maxValue)
     {
-        GUILayout.Label(_contentDict[key], GUILayout.Width(width));
+        GUILayout.Label(DotweenAnimationEditorUtility.CONTENT_DICT[key], GUILayout.Width(width));
         var valueSo = sp.FindPropertyRelative("optionalInt0");
         EditorGUI.BeginChangeCheck();
         var bNewValue = EditorGUILayout.IntSlider(valueSo.intValue, minValue, maxValue);
@@ -2241,7 +2201,7 @@ public class DotweenAnimationContrlEditor : Editor
 
     private void OptionalFloat0(SerializedProperty sp, GUIContentKey key, float width, float minValue, float maxValue)
     {
-        GUILayout.Label(_contentDict[key], GUILayout.Width(width));
+        GUILayout.Label(DotweenAnimationEditorUtility.CONTENT_DICT[key], GUILayout.Width(width));
         var valueSo = sp.FindPropertyRelative("optionalFloat0");
         EditorGUI.BeginChangeCheck();
         var bNewValue = EditorGUILayout.Slider(valueSo.floatValue, minValue, maxValue);
@@ -2260,7 +2220,7 @@ public class DotweenAnimationContrlEditor : Editor
 
     private void OptionalBool0(SerializedProperty sp, GUIContentKey key, float width)
     {
-        GUILayout.Label(_contentDict[key], GUILayout.Width(width));
+        GUILayout.Label(DotweenAnimationEditorUtility.CONTENT_DICT[key], GUILayout.Width(width));
         var valueSo = sp.FindPropertyRelative("optionalBool0");
         EditorGUI.BeginChangeCheck();
         var bNewValue = EditorGUILayout.Toggle(valueSo.boolValue);
