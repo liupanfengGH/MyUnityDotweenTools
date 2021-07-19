@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationShakeScale : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.ShakeScale;
+    }
+
     protected override void FromProcess()
     {
 

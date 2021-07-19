@@ -2,6 +2,11 @@
 
 public class DotweenAnimationLocalMove : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.LocalMove;
+    }
+
     protected override void FromProcess()
     {
         animationData.defulatValueV3 = transform.localPosition;

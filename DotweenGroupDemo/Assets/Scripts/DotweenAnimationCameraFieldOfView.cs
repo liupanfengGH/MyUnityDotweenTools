@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationCameraFieldOfView : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.CameraFieldOfView;
+    }
+
     protected override void FromProcess()
     {
     }

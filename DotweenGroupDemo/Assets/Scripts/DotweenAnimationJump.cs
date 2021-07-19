@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationJump : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.Jump;
+    }
+
     protected override void FromProcess()
     {
 

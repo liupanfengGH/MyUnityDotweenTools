@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationRotate : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.Rotate;
+    }
+
     protected override void FromProcess()
     {
 

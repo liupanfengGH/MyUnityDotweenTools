@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationCameraPixelRect : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.CameraPixelRect;
+    }
+
     protected override void FromProcess()
     {
     }

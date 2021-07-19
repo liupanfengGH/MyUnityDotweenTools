@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationPunchScale : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.PunchScale;
+    }
+
     protected override void FromProcess()
     {
 

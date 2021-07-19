@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationPunchPosition : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.PunchPosition;
+    }
+
     protected override void FromProcess()
     {
 

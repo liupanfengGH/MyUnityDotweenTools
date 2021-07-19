@@ -39,7 +39,7 @@ public class DotweenAnimationLocalMoveEditor : DotweenAnimationBaseEditor
 
         EditorGUILayout.BeginHorizontal();
         IsRelative(true, sp);
-        OptionalBool0(sp);
+        OptionalBool0(sp, GUIContentKey.Snapping, 35f);
         EditorGUILayout.EndHorizontal();
 
         GUILayout.Space(10f);

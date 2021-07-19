@@ -120,4 +120,6 @@ public abstract class DotweenAnimationBase : MonoBehaviour
 
     protected abstract void StopPostProcess();
 
+    public abstract DotweenAnimationContrl.AnimationType GetAnimationType();
+
 }

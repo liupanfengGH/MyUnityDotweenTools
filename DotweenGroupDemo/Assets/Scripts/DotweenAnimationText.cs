@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationText : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.Text;
+    }
+
     protected override void FromProcess()
     {
 

@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using DG.DemiEditor;
+using DG.Tweening;
 using System;
 using UnityEditor;
 using UnityEngine;
@@ -35,8 +36,10 @@ public abstract class DotweenAnimationBaseEditor : Editor
         EditorGUILayout.BeginVertical(GUI.skin.box);
         EditorGUILayout.BeginHorizontal();
 
+        bool validateSuccess = ValidateComponent();
+
         var valueSo = serializedObject.FindProperty("autoPlay");
-        EditorGUI.BeginDisabledGroup(_isPlay);
+        EditorGUI.BeginDisabledGroup(!validateSuccess || _isPlay);
         EditorGUI.BeginChangeCheck();
         bool bNew = EditorGUILayout.ToggleLeft("自动播放", valueSo.boolValue, GUILayout.Width(70f));
         if (EditorGUI.EndChangeCheck())
@@ -47,8 +50,7 @@ public abstract class DotweenAnimationBaseEditor : Editor
         EditorGUI.EndDisabledGroup();
 
         GUILayout.FlexibleSpace();
-
-        EditorGUI.BeginDisabledGroup(bNew);
+        EditorGUI.BeginDisabledGroup(!validateSuccess || bNew);
         if (GUILayout.Button(_isPlay ? "停止" : "播放"))
         {
             DotweenAnimationBase dab = (DotweenAnimationBase)target;
@@ -69,12 +71,64 @@ public abstract class DotweenAnimationBaseEditor : Editor
         EditorGUILayout.EndHorizontal();
 
         EditorGUI.BeginDisabledGroup(_isPlay);
-        DrawAnimationInspectorGUI();
+        if (validateSuccess)
+        {
+            DrawAnimationInspectorGUI();
+        }
+        else
+        {
+            EditorGUILayout.BeginHorizontal();
+            var style = new GUIStyle("Wizard Error").Clone();
+            style.richText = true;
+            var offset = style.contentOffset;
+            style.contentOffset = new Vector2(offset.x, offset.y + 3.5f);
+            var content = new GUIContent("<color='#f3715c'>此动画类型不支持该作用对象或作用对象为None</color>");
+            GUILayout.Box(content, style, GUILayout.Height(20f));
+            EditorGUILayout.EndHorizontal();
+        }
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndVertical();
     }
 
     protected abstract void DrawAnimationInspectorGUI();
+
+    private bool ValidateComponent()
+    {
+        DotweenAnimationBase dab = (DotweenAnimationBase)target;
+        if (DotweenAnimationEditorUtility.VALIDATE_DICT.TryGetValue(dab.GetAnimationType(), out var types))
+        {
+            foreach (var t in types)
+            {
+                var comp = dab.gameObject.GetComponent(t);
+                if (comp)
+                {
+                    var data = dab.animationData;
+                    data.target = comp;
+                    data.targetType = TypeToDoTargetType(t);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private DotweenAnimationContrl.TargetType TypeToDoTargetType(Type t)
+    {
+        string strType = t.ToString();
+
+        int subIdx = strType.LastIndexOf('.');
+
+        if (subIdx != -1)
+            strType = strType.Substring(subIdx + 1);
+
+        if (strType.Contains("Renderer"))
+            strType = "Renderer";
+
+        if (strType.Equals("RawImage"))
+            strType = "Image";
+
+        return (DotweenAnimationContrl.TargetType)Enum.Parse(typeof(DotweenAnimationContrl.TargetType), strType);
+    }
 
     protected virtual void Duration(SerializedProperty sp)
     {
@@ -309,6 +363,185 @@ public abstract class DotweenAnimationBaseEditor : Editor
                     }
                 }
             }
+        }
+    }
+
+    protected virtual bool UseTargetAsV3(SerializedProperty sp)
+    {
+        var valueSo = sp.FindPropertyRelative("useTargetAsV3");
+        return valueSo.boolValue;
+    }
+
+    protected virtual void UseTargetAsVector3(SerializedProperty sp)
+    {
+        var valueSo = sp.FindPropertyRelative("useTargetAsV3");
+        if (GUILayout.Button(valueSo.boolValue ? "变换" : "值", GUILayout.Width(72f)))
+        {
+            valueSo.boolValue = !valueSo.boolValue;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void RotationMode(SerializedProperty sp)
+    {
+        GUILayout.Space(12f);
+        var valueSo = sp.FindPropertyRelative("optionalRotationMode");
+        GUILayout.Label("旋转模式:", GUILayout.Width(65f));
+        EditorGUI.BeginChangeCheck();
+        var eNewValue = EditorGUILayout.Popup(valueSo.enumValueIndex, _rotationNames);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo.enumValueIndex = eNewValue;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void CustomScramble(SerializedProperty sp)
+    {
+        GUILayout.Space(8f);
+        var valueSo = sp.FindPropertyRelative("optionalString");
+        GUILayout.Label("自定义字符:", GUILayout.Width(68f));
+        EditorGUI.BeginChangeCheck();
+        var sNewValue = EditorGUILayout.TextField(valueSo.stringValue);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo.stringValue = sNewValue;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual ScrambleMode ScrambleMode(SerializedProperty sp)
+    {
+        var valueSo = sp.FindPropertyRelative("optionalScrambleMode");
+        GUILayout.Label("争夺模式:", GUILayout.Width(55f));
+        EditorGUI.BeginChangeCheck();
+        var eNewValue = EditorGUILayout.Popup(valueSo.enumValueIndex, _scrambleNames);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo.enumValueIndex = eNewValue;
+            serializedObject.ApplyModifiedProperties();
+        }
+        Enum.TryParse<ScrambleMode>(_scrambleNames[eNewValue], out var mode);
+        return mode;
+    }
+
+    protected virtual void EndStringValue(SerializedProperty sp)
+    {
+        var valueSo = sp.FindPropertyRelative("endValueString");
+        EditorGUI.BeginChangeCheck();
+        var clone = GUI.skin.textArea.Clone();
+        clone.stretchHeight = true;
+        clone.wordWrap = true;
+        var newStr = EditorGUILayout.TextArea(valueSo.stringValue, clone);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo.stringValue = newStr;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void EndColorValue(SerializedProperty sp)
+    {
+        var valueSo1 = sp.FindPropertyRelative("endValueColor");
+        EditorGUI.BeginChangeCheck();
+        var newColorValue = EditorGUILayout.ColorField(valueSo1.colorValue, GUILayout.Height(19f));
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo1.colorValue = newColorValue;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void EndValueV2(SerializedProperty sp)
+    {
+        var valueSo1 = sp.FindPropertyRelative("endValueV2");
+        EditorGUI.BeginChangeCheck();
+        var newV2Value = EditorGUILayout.Vector2Field(GUIContent.none, valueSo1.vector2Value, GUILayout.Height(16f));
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo1.vector2Value = newV2Value;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void EndFloatValue(SerializedProperty sp)
+    {
+        var valueSo1 = sp.FindPropertyRelative("endValueFloat");
+        EditorGUI.BeginChangeCheck();
+        var newfValue = EditorGUILayout.FloatField(valueSo1.floatValue);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo1.floatValue = newfValue;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void EndRectValue(SerializedProperty sp)
+    {
+        var valueSo1 = sp.FindPropertyRelative("endValueRect");
+        EditorGUI.BeginChangeCheck();
+        var newRect = EditorGUILayout.RectField(valueSo1.rectValue);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo1.rectValue = newRect;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void EndValueTransform(SerializedProperty sp)
+    {
+        var valueSo1 = sp.FindPropertyRelative("endValueTransform");
+        EditorGUI.BeginChangeCheck();
+        var newObj = EditorGUILayout.ObjectField(valueSo1.objectReferenceValue, typeof(Transform), true);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo1.objectReferenceValue = newObj;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void OptionalInt0(SerializedProperty sp, GUIContentKey key, float width, int minValue, int maxValue)
+    {
+        GUILayout.Label(DotweenAnimationEditorUtility.CONTENT_DICT[key], GUILayout.Width(width));
+        var valueSo = sp.FindPropertyRelative("optionalInt0");
+        EditorGUI.BeginChangeCheck();
+        var bNewValue = EditorGUILayout.IntSlider(valueSo.intValue, minValue, maxValue);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo.intValue = bNewValue;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual void OptionalFloat0(SerializedProperty sp, GUIContentKey key, float width, float minValue, float maxValue)
+    {
+        GUILayout.Label(DotweenAnimationEditorUtility.CONTENT_DICT[key], GUILayout.Width(width));
+        var valueSo = sp.FindPropertyRelative("optionalFloat0");
+        EditorGUI.BeginChangeCheck();
+        var bNewValue = EditorGUILayout.Slider(valueSo.floatValue, minValue, maxValue);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo.floatValue = bNewValue;
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
+    protected virtual bool IsTrueOptionalBool0(SerializedProperty sp)
+    {
+        var valueSo = sp.FindPropertyRelative("optionalBool0");
+        return valueSo.boolValue;
+    }
+
+    protected virtual void OptionalBool0(SerializedProperty sp, GUIContentKey key, float width)
+    {
+        GUILayout.Label(DotweenAnimationEditorUtility.CONTENT_DICT[key], GUILayout.Width(width));
+        var valueSo = sp.FindPropertyRelative("optionalBool0");
+        EditorGUI.BeginChangeCheck();
+        var bNewValue = EditorGUILayout.Toggle(valueSo.boolValue);
+        if (EditorGUI.EndChangeCheck())
+        {
+            valueSo.boolValue = bNewValue;
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }

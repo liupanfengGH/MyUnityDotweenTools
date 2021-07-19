@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum GUIContentKey
 {
@@ -39,5 +40,94 @@ public static class DotweenAnimationEditorUtility
         { GUIContentKey.JumpPower,new GUIContent("跳力度:") },
         { GUIContentKey.JumpsNum,new GUIContent("跳次数:") }
     };
+    public readonly static Dictionary<DotweenAnimationContrl.AnimationType, Type[]> VALIDATE_DICT = new Dictionary<DotweenAnimationContrl.AnimationType, Type[]>()
+    {
+        {DotweenAnimationContrl.AnimationType.Move,new Type[]{
+            typeof(Rigidbody),
+            typeof(Rigidbody2D),
+            typeof(RectTransform),
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.LocalMove,new Type[]{
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.Rotate,new Type[]{
+            typeof(Rigidbody),
+            typeof(Rigidbody2D),
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.LocalRotate,new Type[]{
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.Scale,new Type[]{
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.Color,new Type[]{
+            typeof(Light),
+            typeof(SpriteRenderer),
+            typeof(Image),
+            typeof(Text),
+            typeof(RawImage),
+            typeof(Renderer)
+            }},
+        {DotweenAnimationContrl.AnimationType.Fade,new Type[]{
+            typeof(Light),
+            typeof(SpriteRenderer),
+            typeof(Image),
+            typeof(Text),
+            typeof(CanvasGroup),
+            typeof(RawImage),
+            typeof(Renderer)
+            }},
+        {DotweenAnimationContrl.AnimationType.Text,new Type[]{
+            typeof(Text)
+            }},
+        {DotweenAnimationContrl.AnimationType.PunchPosition,new Type[]{
+            typeof(RectTransform),
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.PunchRotation,new Type[]{
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.PunchScale,new Type[]{
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.ShakePostion,new Type[]{
+            typeof(RectTransform),
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.ShakeRotation,new Type[]{
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.ShakeScale,new Type[]{
+            typeof(Transform)
+            }},
+        {DotweenAnimationContrl.AnimationType.UIWidthHeight,new Type[]{
+            typeof(RectTransform)
+            }},
+        {DotweenAnimationContrl.AnimationType.CameraAspect,new Type[]{
+            typeof(Camera)
+            }},
+        {DotweenAnimationContrl.AnimationType.CameraBackgroundColor,new Type[]{
+            typeof(Camera)
+            }},
+        {DotweenAnimationContrl.AnimationType.CameraFieldOfView,new Type[]{
+            typeof(Camera)
+            }},
+        {DotweenAnimationContrl.AnimationType.CameraOrthoSize,new Type[]{
+            typeof(Camera)
+            }},
+        {DotweenAnimationContrl.AnimationType.CameraPixelRect,new Type[]{
+            typeof(Camera)
+            }},
+        {DotweenAnimationContrl.AnimationType.CameraRect,new Type[]{
+            typeof(Camera)
+            }},
+        { DotweenAnimationContrl.AnimationType.Jump,new Type[]{
+            typeof(RectTransform),
+            typeof(Transform)
+            }}
+    };
+
 }
 

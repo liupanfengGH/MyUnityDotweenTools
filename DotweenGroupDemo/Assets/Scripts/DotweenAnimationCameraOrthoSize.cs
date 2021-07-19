@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationCameraOrthoSize : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.CameraOrthoSize;
+    }
+
     protected override void FromProcess()
     {
     }

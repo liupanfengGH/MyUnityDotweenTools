@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class DotweenAnimationFade : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.Fade;
+    }
+
     protected override void FromProcess()
     {
 

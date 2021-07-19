@@ -2,6 +2,11 @@
 
 public class DotweenAnimationMove : DotweenAnimationBase
 {
+    public override DotweenAnimationContrl.AnimationType GetAnimationType()
+    {
+        return DotweenAnimationContrl.AnimationType.Move;
+    }
+
     protected override void FromProcess()
     {
 
