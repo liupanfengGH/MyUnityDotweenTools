@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 
 [CustomEditor(typeof(DotweenAnimationRotate))]
-public class DotweenAnimationRotateEditor : UnityEditor.Editor
+public class DotweenAnimationRotateEditor : DotweenAnimationBaseEditor
 {
-    public override void OnInspectorGUI()
+    protected override void DrawAnimationInspectorGUI()
     {
-        base.OnInspectorGUI();
+
     }
 }

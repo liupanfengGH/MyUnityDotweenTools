@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(DotweenAnimationJump))]
-public class DotweenAnimationJumpEditor : UnityEditor.Editor
+public class DotweenAnimationJumpEditor : DotweenAnimationBaseEditor
 {
-    public override void OnInspectorGUI()
+    protected override void DrawAnimationInspectorGUI()
     {
-        base.OnInspectorGUI();
+
     }
 }

@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 
 [CustomEditor(typeof(DotweenAnimationScale))]
-public class DotweenAnimationScaleEditor : UnityEditor.Editor
+public class DotweenAnimationScaleEditor : DotweenAnimationBaseEditor
 {
-    public override void OnInspectorGUI()
+    protected override void DrawAnimationInspectorGUI()
     {
-        base.OnInspectorGUI();
+
     }
 }

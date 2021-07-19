@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 
 [CustomEditor(typeof(DotweenAnimationShakeScale))]
-public class DotweenAnimationShakeScaleEditor : UnityEditor.Editor
+public class DotweenAnimationShakeScaleEditor : DotweenAnimationBaseEditor
 {
-    public override void OnInspectorGUI()
+    protected override void DrawAnimationInspectorGUI()
     {
-        base.OnInspectorGUI();
+
     }
 }

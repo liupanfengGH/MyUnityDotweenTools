@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(DotweenAnimationCameraFieldOfView))]
-public class DotweenAnimationCameraFieldOfViewEditor : UnityEditor.Editor
+public class DotweenAnimationCameraFieldOfViewEditor : DotweenAnimationBaseEditor
 {
-    public override void OnInspectorGUI()
+    protected override void DrawAnimationInspectorGUI()
     {
-        base.OnInspectorGUI();
+
     }
 }

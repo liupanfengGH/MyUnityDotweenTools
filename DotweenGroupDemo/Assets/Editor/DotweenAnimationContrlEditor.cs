@@ -1185,6 +1185,8 @@ public class DotweenAnimationContrlEditor : Editor
         _toggleEventNames = DotweenAnimationEditorUtility.TOGGLE_EVENT_NAMES;
         _eventNames = DotweenAnimationEditorUtility.EVENT_NAMES;
         _eventButtonNames = DotweenAnimationEditorUtility.EVENT_BUTTON_NAMES;
+        _rotationNames = DotweenAnimationEditorUtility.ROTATION_NAMES;
+        _scrambleNames = DotweenAnimationEditorUtility.SCRAMBLE_NAMES;
     }
 
     private GUIContent create_txt = new GUIContent("创建");
@@ -2034,10 +2036,6 @@ public class DotweenAnimationContrlEditor : Editor
 
     private void RotationMode(SerializedProperty sp)
     {
-        if (null == _rotationNames || _rotationNames.Length == 0)
-        {
-            _rotationNames = Enum.GetNames(typeof(RotateMode));
-        }
         GUILayout.Space(12f);
         var valueSo = sp.FindPropertyRelative("optionalRotationMode");
         GUILayout.Label("旋转模式:", GUILayout.Width(65f));
@@ -2066,10 +2064,6 @@ public class DotweenAnimationContrlEditor : Editor
 
     private ScrambleMode ScrambleMode(SerializedProperty sp)
     {
-        if(null == _scrambleNames || _scrambleNames.Length == 0)
-        {
-            _scrambleNames = Enum.GetNames(typeof(ScrambleMode));
-        }
         var valueSo = sp.FindPropertyRelative("optionalScrambleMode");
         GUILayout.Label("争夺模式:", GUILayout.Width(55f));
         EditorGUI.BeginChangeCheck();

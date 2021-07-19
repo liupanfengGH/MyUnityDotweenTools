@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(DotweenAnimationCameraBackgroundColor))]
-public class DotweenAnimationCameraBackgroundColorEditor : UnityEditor.Editor
+public class DotweenAnimationCameraBackgroundColorEditor : DotweenAnimationBaseEditor
 {
-    public override void OnInspectorGUI()
+    protected override void DrawAnimationInspectorGUI()
     {
-        base.OnInspectorGUI();
+
     }
 }
