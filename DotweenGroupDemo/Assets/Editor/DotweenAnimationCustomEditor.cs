@@ -745,9 +745,11 @@ public class DotweenAnimationCustomEditor : DotweenAnimationBaseEditor
             }
             else if (mode == DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage)
             {
-                bool isChange = valueSo2.enumValueIndex != valueSo3.enumValueIndex;
-                valueSo2.enumValueIndex = valueSo3.enumValueIndex;
-                if (isChange) serializedObject.ApplyModifiedProperties();
+                if (valueSo2.enumValueIndex == eIndex)//只赋值一次
+                {
+                    valueSo2.enumValueIndex = valueSo3.enumValueIndex;
+                    serializedObject.ApplyModifiedProperties();
+                }
             }
 
             var dType = (DotweenAnimationContrl.TargetType)Enum.ToObject(typeof(DotweenAnimationContrl.TargetType), valueSo2.enumValueIndex);
