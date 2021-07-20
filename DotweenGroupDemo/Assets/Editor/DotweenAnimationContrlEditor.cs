@@ -2247,8 +2247,12 @@ public class DotweenAnimationContrlEditor : Editor
                         var data = dac.animationList[dataIndex];
                         data.target = comp;
                         data.targetType = TypeToDoTargetType(t);
+
+                        if(data.forcedTargetType == DotweenAnimationContrl.TargetType.Unset || data.targetType == data.forcedTargetType)
+                        {
+                            return true;
+                        }
                     }
-                    return true;
                 }
             }
         }

@@ -939,12 +939,19 @@ public class DotweenAnimationContrl : MonoBehaviour
     {
         if (null == animationData) return;
 
+        TargetType targetType = animationData.targetType;
+
+        if (animationData.forcedTargetType != TargetType.Unset)
+        {
+            targetType = animationData.forcedTargetType;
+        }
+
         switch (animationData.animationType)
         {
             #region 移动
             case AnimationType.Move:
                 {
-                    switch (animationData.targetType)
+                    switch (targetType)
                     {
                         case TargetType.Transform:
                             {
@@ -992,7 +999,7 @@ public class DotweenAnimationContrl : MonoBehaviour
             #region 旋转
             case AnimationType.Rotate:
                 {
-                    switch (animationData.targetType)
+                    switch (targetType)
                     {
                         case TargetType.Transform:
                             {
@@ -1039,7 +1046,7 @@ public class DotweenAnimationContrl : MonoBehaviour
             #region 跳(抛物线)
             case AnimationType.Jump:
                 {
-                    switch (animationData.targetType)
+                    switch (targetType)
                     {
                         case TargetType.Transform:
                             {
@@ -1074,7 +1081,7 @@ public class DotweenAnimationContrl : MonoBehaviour
             #region 颜色
             case AnimationType.Color:
                 {
-                    switch (animationData.targetType)
+                    switch (targetType)
                     {
                         case TargetType.Renderer:
                             {
@@ -1123,7 +1130,7 @@ public class DotweenAnimationContrl : MonoBehaviour
             #region 渐变
             case AnimationType.Fade:
                 {
-                    switch (animationData.targetType)
+                    switch (targetType)
                     {
                         case TargetType.Renderer:
                             {
@@ -1190,7 +1197,7 @@ public class DotweenAnimationContrl : MonoBehaviour
             #region 猛烈位移
             case AnimationType.PunchPosition:
                 {
-                    switch (animationData.targetType)
+                    switch (targetType)
                     {
                         case TargetType.Transform:
                             {
@@ -1229,7 +1236,7 @@ public class DotweenAnimationContrl : MonoBehaviour
             #region 抖动位移
             case AnimationType.ShakePostion:
                 {
-                    switch (animationData.targetType)
+                    switch (targetType)
                     {
                         case TargetType.Transform:
                             {

@@ -105,7 +105,11 @@ public abstract class DotweenAnimationBaseEditor : Editor
                     var data = dab.animationData;
                     data.target = comp;
                     data.targetType = TypeToDoTargetType(t);
-                    return true;
+
+                    if (data.forcedTargetType == DotweenAnimationContrl.TargetType.Unset || data.targetType == data.forcedTargetType)
+                    {
+                        return true;
+                    }
                 }
             }
         }
