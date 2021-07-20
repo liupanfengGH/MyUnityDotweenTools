@@ -12,7 +12,7 @@ public abstract class DotweenAnimationBaseEditor : Editor
 
     private string[] _easeNames, _loopTypeNames, _toggleEventNames, _eventNames, _eventButtonNames, _rotationNames, _scrambleNames;
 
-    void OnEnable()
+    protected virtual void OnEnable()
     {
         sp = serializedObject.FindProperty("animationData");
         EventNames();
@@ -70,6 +70,8 @@ public abstract class DotweenAnimationBaseEditor : Editor
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndHorizontal();
 
+        DrawCustomHeader();
+
         EditorGUI.BeginDisabledGroup(_isPlay);
         if (validateSuccess)
         {
@@ -92,6 +94,8 @@ public abstract class DotweenAnimationBaseEditor : Editor
 
     protected abstract void DrawAnimationInspectorGUI();
 
+    protected virtual void DrawCustomHeader() { }
+
     private bool ValidateComponent()
     {
         DotweenAnimationBase dab = (DotweenAnimationBase)target;
@@ -103,13 +107,10 @@ public abstract class DotweenAnimationBaseEditor : Editor
                 if (comp)
                 {
                     var data = dab.animationData;
+                    var tt = TypeToDoTargetType(t);
                     data.target = comp;
-                    data.targetType = TypeToDoTargetType(t);
-
-                    if (data.forcedTargetType == DotweenAnimationContrl.TargetType.Unset || data.targetType == data.forcedTargetType)
-                    {
-                        return true;
-                    }
+                    data.targetType = tt;
+                    return true;
                 }
             }
         }

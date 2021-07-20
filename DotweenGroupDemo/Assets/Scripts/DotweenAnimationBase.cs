@@ -124,9 +124,9 @@ public abstract class DotweenAnimationBase : MonoBehaviour
         {
             tween.Rewind();
             tween.Kill();
-            tween = null;
-            targetType = TargetType.Unset;
             StopPostProcess();
+            targetType = TargetType.Unset;
+            tween = null;
         }
     }
 

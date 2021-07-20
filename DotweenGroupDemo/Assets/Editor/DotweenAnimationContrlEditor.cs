@@ -689,16 +689,18 @@ public class DotweenAnimationContrlEditor : Editor
 
             if (mode == DotweenAnimationContrl.ChooseTargetMode.None)
             {
+                bool isChange = valueSo2.enumValueIndex != eIndex;
                 valueSo2.enumValueIndex = eIndex;
+                if (isChange) serializedObject.ApplyModifiedProperties();
             }
-
-            if (isTrue && valueSo2.enumValueIndex == eIndex)
+            else if (mode == DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage)
             {
+                bool isChange = valueSo2.enumValueIndex != valueSo3.enumValueIndex;
                 valueSo2.enumValueIndex = valueSo3.enumValueIndex;
-                serializedObject.ApplyModifiedProperties();
+                if(isChange) serializedObject.ApplyModifiedProperties();
             }
 
-            var dType = (DotweenAnimationContrl.TargetType)Enum.GetValues(typeof(DotweenAnimationContrl.TargetType)).GetValue(valueSo2.enumValueIndex);
+            var dType = (DotweenAnimationContrl.TargetType)Enum.ToObject(typeof(DotweenAnimationContrl.TargetType),valueSo2.enumValueIndex);
 
             if (mode == DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage && dType != DotweenAnimationContrl.TargetType.Unset)
             {
@@ -1784,6 +1786,8 @@ public class DotweenAnimationContrlEditor : Editor
             if(EditorGUI.EndChangeCheck())
             {
                 at.enumValueIndex = eIdx;
+                var valueSo3 = sp.FindPropertyRelative("forcedTargetType");
+                valueSo3.enumValueIndex = (int)DotweenAnimationContrl.TargetType.Unset;
                 serializedObject.ApplyModifiedProperties();
             }
 
@@ -1812,7 +1816,10 @@ public class DotweenAnimationContrlEditor : Editor
                     var valueSo1 = sp.FindPropertyRelative("target");
                     valueSo1.objectReferenceValue = null;
                     var valueSo2 = sp.FindPropertyRelative("targetType");
-                    valueSo2.enumValueIndex = (int)DotweenAnimationContrl.TargetType.Unset;
+                    var enumIdx = (int)DotweenAnimationContrl.TargetType.Unset;
+                    valueSo2.enumValueIndex = enumIdx;
+                    var valueSo3 = sp.FindPropertyRelative("forcedTargetType");
+                    valueSo3.enumValueIndex = enumIdx;
                 }
 
                 serializedObject.ApplyModifiedProperties();
@@ -2245,18 +2252,14 @@ public class DotweenAnimationContrlEditor : Editor
                     if(target is DotweenAnimationContrl dac)
                     {
                         var data = dac.animationList[dataIndex];
+                        var tt = TypeToDoTargetType(t);
                         data.target = comp;
-                        data.targetType = TypeToDoTargetType(t);
-
-                        if(data.forcedTargetType == DotweenAnimationContrl.TargetType.Unset || data.targetType == data.forcedTargetType)
-                        {
-                            return true;
-                        }
+                        data.targetType = tt;
+                        return true;
                     }
                 }
             }
         }
-
         return false;
     }
 
