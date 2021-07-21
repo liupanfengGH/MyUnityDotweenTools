@@ -45,15 +45,13 @@ public class DotweenAnimationCustomEditor : DotweenAnimationBaseEditor
     protected override void DrawCustomHeader()
     {
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("动画类型:",GUILayout.Width(52f));
+        GUILayout.Label("动画类型:",GUILayout.Width(55f));
         var vSo = sp.FindPropertyRelative("animationType");
         EditorGUI.BeginChangeCheck();
         int eIdx = EditorGUILayout.Popup(vSo.enumValueIndex, Enum.GetNames(typeof(AnimationType)));
         if(EditorGUI.EndChangeCheck())
         {
             vSo.enumValueIndex = eIdx;
-            var valueSo3 = sp.FindPropertyRelative("forcedTargetType");
-            valueSo3.enumValueIndex = (int)DotweenAnimationContrl.TargetType.Unset;
             serializedObject.ApplyModifiedProperties();
         }
         EditorGUILayout.EndHorizontal();
@@ -61,11 +59,9 @@ public class DotweenAnimationCustomEditor : DotweenAnimationBaseEditor
 
     protected override void DrawAnimationInspectorGUI()
     {
-        var vSo = sp.FindPropertyRelative("animationType");
-        AnimationType at = (AnimationType)Enum.ToObject(typeof(AnimationType),vSo.enumValueIndex);
-        if(_actionDict.ContainsKey(at))
+        if (_actionDict.TryGetValue(animationBase.GetAnimationType(), out var action))
         {
-            _actionDict[at]();
+            action();
         }
     }
 
@@ -720,73 +716,86 @@ public class DotweenAnimationCustomEditor : DotweenAnimationBaseEditor
         DrawEvents(sp);
     }
 
+    protected override void MultipleTargetType()
+    {
+        switch (animationBase.GetAnimationType()) 
+        {
+            case AnimationType.Fade:
+                {
+                    var valueSo2 = sp.FindPropertyRelative("forcedTargetType");
+                    var valueSo3 = sp.FindPropertyRelative("targetType");
+                    var valueSo4 = sp.FindPropertyRelative("target");
+
+                    bool isContain = false;
+                    for (int i = 0; i < components.Count; ++i) 
+                    {
+                        var t = components[i].GetType();
+                        var tt = TypeToDoTargetType(t);
+                        isContain = animationBase.animationData.targetType == tt;
+                        if (isContain) break;
+                    }
+                    
+                    if (!isContain)
+                    {
+                        var tt = TypeToDoTargetType(components[0].GetType());
+                        animationBase.animationData.target = components[0];
+                        animationBase.animationData.targetType = tt;
+                        valueSo4.objectReferenceValue = components[0];
+                        valueSo3.enumValueIndex = (int)tt;
+                        serializedObject.ApplyModifiedProperties();
+                    }
+
+                    var canvasGroup = components.Find((c)=> { return c.GetType() == typeof(CanvasGroup); });
+                    var image = components.Find((c) => { return c.GetType() == typeof(Image); });
+
+                    if (canvasGroup && image)
+                    {
+                        if (animationBase.animationData.forcedTargetType == DotweenAnimationContrl.TargetType.Unset)//只赋值一次
+                        {
+                            animationBase.animationData.forcedTargetType = animationBase.animationData.targetType;
+                            valueSo2.enumValueIndex = (int)animationBase.animationData.targetType;
+                            serializedObject.ApplyModifiedProperties();
+                        }
+                    }
+
+                    if (animationBase.animationData.forcedTargetType != TargetType.Unset)
+                    {
+                        DotweenAnimationContrl.FadeTargetType fadeTarget = (DotweenAnimationContrl.FadeTargetType)Enum.Parse(typeof(DotweenAnimationContrl.FadeTargetType), animationBase.animationData.forcedTargetType.ToString());
+
+                        EditorGUILayout.BeginHorizontal();
+                        GUILayout.Label("褪色类型:", GUILayout.Width(55f));
+                        EditorGUI.BeginChangeCheck();
+                        var ep = EditorGUILayout.EnumPopup(fadeTarget);
+                        EditorGUILayout.EndHorizontal();
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            var dType1 = (DotweenAnimationContrl.TargetType)Enum.Parse(typeof(DotweenAnimationContrl.TargetType), ep.ToString());
+
+                            valueSo2.enumValueIndex = (int)dType1;
+
+                            switch (dType1)
+                            {
+                                case DotweenAnimationContrl.TargetType.CanvasGroup:
+                                    {
+                                        valueSo4.objectReferenceValue = canvasGroup;
+                                    }
+                                    break;
+                                case DotweenAnimationContrl.TargetType.Image:
+                                    {
+                                        valueSo4.objectReferenceValue = image;
+                                    }
+                                    break;
+                            }
+                            serializedObject.ApplyModifiedProperties();
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
     private void DrawFade()
     {
-        var dab = (DotweenAnimationBase)target;
-        if (dab)
-        {
-            var canvasGroup = dab.gameObject.GetComponent<CanvasGroup>();
-            var image = dab.gameObject.GetComponent<Image>();
-
-            var valueSo2 = sp.FindPropertyRelative("forcedTargetType");
-            var valueSo3 = sp.FindPropertyRelative("targetType");
-            var valueSo4 = sp.FindPropertyRelative("target");
-
-            bool isTrue = canvasGroup && image;
-
-            DotweenAnimationContrl.ChooseTargetMode mode = isTrue ? DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage : DotweenAnimationContrl.ChooseTargetMode.None;
-            int eIndex = (int)DotweenAnimationContrl.TargetType.Unset;
-
-            if (mode == DotweenAnimationContrl.ChooseTargetMode.None)
-            {
-                bool isChange = valueSo2.enumValueIndex != eIndex;
-                valueSo2.enumValueIndex = eIndex;
-                if (isChange) serializedObject.ApplyModifiedProperties();
-            }
-            else if (mode == DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage)
-            {
-                if (valueSo2.enumValueIndex == eIndex)//只赋值一次
-                {
-                    valueSo2.enumValueIndex = valueSo3.enumValueIndex;
-                    serializedObject.ApplyModifiedProperties();
-                }
-            }
-
-            var dType = (DotweenAnimationContrl.TargetType)Enum.ToObject(typeof(DotweenAnimationContrl.TargetType), valueSo2.enumValueIndex);
-
-            if (mode == DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage && dType != DotweenAnimationContrl.TargetType.Unset)
-            {
-                DotweenAnimationContrl.FadeTargetType fadeTarget = (DotweenAnimationContrl.FadeTargetType)Enum.Parse(typeof(DotweenAnimationContrl.FadeTargetType), dType.ToString());
-
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label("褪色类型:", GUILayout.Width(55f));
-                EditorGUI.BeginChangeCheck();
-                var ep = EditorGUILayout.EnumPopup(fadeTarget);
-                EditorGUILayout.EndHorizontal();
-                if (EditorGUI.EndChangeCheck())
-                {
-                    var dType1 = (DotweenAnimationContrl.TargetType)Enum.Parse(typeof(DotweenAnimationContrl.TargetType), ep.ToString());
-
-                    valueSo2.enumValueIndex = (int)dType1;
-
-                    switch (dType1)
-                    {
-                        case DotweenAnimationContrl.TargetType.CanvasGroup:
-                            {
-                                valueSo4.objectReferenceValue = canvasGroup;
-                            }
-                            break;
-                        case DotweenAnimationContrl.TargetType.Image:
-                            {
-                                valueSo4.objectReferenceValue = image;
-                            }
-                            break;
-                    }
-                    serializedObject.ApplyModifiedProperties();
-                }
-            }
-        }
-
         EditorGUILayout.BeginHorizontal();
         Duration(sp);
         SpeedBase(sp);

@@ -1,6 +1,7 @@
 ﻿using DG.DemiEditor;
 using DG.Tweening;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,10 +11,15 @@ public abstract class DotweenAnimationBaseEditor : Editor
 
     protected SerializedProperty sp;
 
+    protected DotweenAnimationBase animationBase;
+
     private string[] _easeNames, _loopTypeNames, _toggleEventNames, _eventNames, _eventButtonNames, _rotationNames, _scrambleNames;
+
+    private bool _validateSuccess;
 
     protected virtual void OnEnable()
     {
+        animationBase = (DotweenAnimationBase)target;
         sp = serializedObject.FindProperty("animationData");
         EventNames();
     }
@@ -36,10 +42,8 @@ public abstract class DotweenAnimationBaseEditor : Editor
         EditorGUILayout.BeginVertical(GUI.skin.box);
         EditorGUILayout.BeginHorizontal();
 
-        bool validateSuccess = ValidateComponent();
-
         var valueSo = serializedObject.FindProperty("autoPlay");
-        EditorGUI.BeginDisabledGroup(!validateSuccess || _isPlay);
+        EditorGUI.BeginDisabledGroup(!_validateSuccess || _isPlay);
         EditorGUI.BeginChangeCheck();
         bool bNew = EditorGUILayout.ToggleLeft("自动播放", valueSo.boolValue, GUILayout.Width(70f));
         if (EditorGUI.EndChangeCheck())
@@ -50,35 +54,45 @@ public abstract class DotweenAnimationBaseEditor : Editor
         EditorGUI.EndDisabledGroup();
 
         GUILayout.FlexibleSpace();
-        EditorGUI.BeginDisabledGroup(!validateSuccess || bNew);
+        EditorGUI.BeginDisabledGroup(!_validateSuccess || bNew);
         if (GUILayout.Button(_isPlay ? "停止" : "播放"))
         {
-            DotweenAnimationBase dab = (DotweenAnimationBase)target;
-            if (dab)
+            if (_isPlay)
             {
-                if (_isPlay)
-                {
-                    dab.Stop();
-                }
-                else
-                {
-                    dab.Play();
-                }
-                _isPlay = !_isPlay;
+                animationBase.Stop();
             }
+            else
+            {
+                animationBase.Play();
+            }
+            _isPlay = !_isPlay;
         }
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndHorizontal();
 
+        EditorGUI.BeginDisabledGroup(_isPlay);
+
         DrawCustomHeader();
 
-        EditorGUI.BeginDisabledGroup(_isPlay);
-        if (validateSuccess)
+        _validateSuccess = ValidateComponent();
+
+        if (_validateSuccess)
         {
+            TargetTypePersistence();
             DrawAnimationInspectorGUI();
         }
         else
         {
+            components.Clear();
+            var v1 = sp.FindPropertyRelative("target");
+            v1.objectReferenceValue = null;
+            int eIdx = (int)DotweenAnimationContrl.TargetType.Unset;
+            var v2 = sp.FindPropertyRelative("targetType");
+            v2.enumValueIndex = eIdx;
+            var v3 = sp.FindPropertyRelative("forcedTargetType");
+            v3.enumValueIndex = eIdx;
+            serializedObject.ApplyModifiedProperties();
+
             EditorGUILayout.BeginHorizontal();
             var style = new GUIStyle("Wizard Error").Clone();
             style.richText = true;
@@ -88,6 +102,7 @@ public abstract class DotweenAnimationBaseEditor : Editor
             GUILayout.Box(content, style, GUILayout.Height(20f));
             EditorGUILayout.EndHorizontal();
         }
+
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndVertical();
     }
@@ -96,28 +111,70 @@ public abstract class DotweenAnimationBaseEditor : Editor
 
     protected virtual void DrawCustomHeader() { }
 
+    protected List<Component> components = new List<Component>();
+
     private bool ValidateComponent()
     {
-        DotweenAnimationBase dab = (DotweenAnimationBase)target;
-        if (DotweenAnimationEditorUtility.VALIDATE_DICT.TryGetValue(dab.GetAnimationType(), out var types))
+        components.Clear();
+        if (DotweenAnimationEditorUtility.VALIDATE_DICT.TryGetValue(animationBase.GetAnimationType(), out var types))
         {
             foreach (var t in types)
             {
-                var comp = dab.gameObject.GetComponent(t);
-                if (comp)
+                var comp = animationBase.gameObject.GetComponent(t);
+                if (comp && !components.Contains(comp))
                 {
-                    var data = dab.animationData;
-                    var tt = TypeToDoTargetType(t);
-                    data.target = comp;
-                    data.targetType = tt;
-                    return true;
+                  components.Add(comp);
                 }
             }
         }
-        return false;
+        return components.Count > 0;
     }
 
-    private DotweenAnimationContrl.TargetType TypeToDoTargetType(Type t)
+    private void TargetTypePersistence() 
+    {
+        if(components.Count > 1)
+        {
+            MultipleTargetType();
+        }
+        else
+        {
+            var c = components[0];
+            bool isChange = animationBase.animationData.target != c;
+            if (isChange)
+            {
+                var v1 = sp.FindPropertyRelative("target");
+                v1.objectReferenceValue = c;
+                serializedObject.ApplyModifiedProperties();
+            }
+            animationBase.animationData.target = c;
+
+            var t = TypeToDoTargetType(c.GetType());
+            isChange = animationBase.animationData.targetType != t;
+            if(isChange)
+            {
+                var v2 = sp.FindPropertyRelative("targetType");
+                v2.enumValueIndex = (int)t;
+                serializedObject.ApplyModifiedProperties();
+            }
+            animationBase.animationData.targetType = t;
+
+            isChange = animationBase.animationData.forcedTargetType != DotweenAnimationContrl.TargetType.Unset;
+            if (isChange)
+            {
+                var v3 = sp.FindPropertyRelative("forcedTargetType");
+                v3.enumValueIndex = (int)DotweenAnimationContrl.TargetType.Unset;
+                serializedObject.ApplyModifiedProperties();
+            }
+            animationBase.animationData.forcedTargetType = DotweenAnimationContrl.TargetType.Unset;
+        }
+
+        //Debug.LogError($"动画类型:{animationBase.animationData.animationType}-------------组件数量:{components.Count}-------目标类型:{animationBase.animationData.targetType}-------强制目标类型:{animationBase.animationData.forcedTargetType}");
+
+    }
+
+    protected virtual void MultipleTargetType(){ }
+
+    protected DotweenAnimationContrl.TargetType TypeToDoTargetType(Type t)
     {
         string strType = t.ToString();
 
