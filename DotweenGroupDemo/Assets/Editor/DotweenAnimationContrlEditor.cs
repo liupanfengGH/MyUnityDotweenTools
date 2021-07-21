@@ -1709,8 +1709,6 @@ public class DotweenAnimationContrlEditor : Editor
             ClearChangeGroup();
 
             EditorGUIUtility.ExitGUI();
-
-            return false;
         }
         EditorGUI.EndDisabledGroup();
         EditorGUILayout.EndHorizontal();
@@ -1788,22 +1786,21 @@ public class DotweenAnimationContrlEditor : Editor
             if(EditorGUI.EndChangeCheck())
             {
                 at.enumValueIndex = eIdx;
+                var valueSo1 = sp.FindPropertyRelative("target");
+                valueSo1.objectReferenceValue = null;
+                var valueSo2 = sp.FindPropertyRelative("targetType");
+                var enumIdx = (int)DotweenAnimationContrl.TargetType.Unset;
+                valueSo2.enumValueIndex = enumIdx;
                 var valueSo3 = sp.FindPropertyRelative("forcedTargetType");
-                valueSo3.enumValueIndex = (int)DotweenAnimationContrl.TargetType.Unset;
+                valueSo3.enumValueIndex = enumIdx;
                 serializedObject.ApplyModifiedProperties();
+                components.Clear();
+                GUIUtility.ExitGUI();
             }
 
             eName = _tweensName[eIdx];
             Enum.TryParse(eName, out animationType);
             
-            if (animationType == DotweenAnimationContrl.AnimationType.None)
-            {
-                EditorGUILayout.EndHorizontal();
-                EditorGUILayout.EndVertical();
-                EditorGUILayout.EndHorizontal();
-                return true;
-            }
-
             GUILayout.Space(50f);
             GUILayout.Label("作用对象:", GUILayout.Width(55f));
             var valueSo = sp.FindPropertyRelative("targetGO");
@@ -1823,8 +1820,9 @@ public class DotweenAnimationContrlEditor : Editor
                     var valueSo3 = sp.FindPropertyRelative("forcedTargetType");
                     valueSo3.enumValueIndex = enumIdx;
                 }
-
                 serializedObject.ApplyModifiedProperties();
+                components.Clear();
+                GUIUtility.ExitGUI();
             }
 
             GUILayout.FlexibleSpace();
@@ -1861,6 +1859,16 @@ public class DotweenAnimationContrlEditor : Editor
 
             if (validateSuccess)
             {
+
+                //if (target is DotweenAnimationContrl dac)
+                //{
+                //    var data = dac.animationList[dataIndex];
+                //    var tt = TypeToDoTargetType(t);
+                //    data.target = comp;
+                //    data.targetType = tt;
+                //    return true;
+                //}
+
                 DrawAnimationTypeInspector(animationType, sp);
             }
             else
@@ -2234,6 +2242,7 @@ public class DotweenAnimationContrlEditor : Editor
         }
     }
 
+    private List<Component> components = new List<Component>();
     /// <summary>
     /// 验证作用对象
     /// </summary>
@@ -2244,25 +2253,19 @@ public class DotweenAnimationContrlEditor : Editor
     {
         if (!newObj) return false;
 
-        if(DotweenAnimationEditorUtility.VALIDATE_DICT.TryGetValue(animationType,out var types))
+        components.Clear();
+        if (DotweenAnimationEditorUtility.VALIDATE_DICT.TryGetValue(animationType,out var types))
         {
             foreach(var t in types)
             {
                 var comp = newObj.GetComponent(t);
                 if (comp)
                 {
-                    if(target is DotweenAnimationContrl dac)
-                    {
-                        var data = dac.animationList[dataIndex];
-                        var tt = TypeToDoTargetType(t);
-                        data.target = comp;
-                        data.targetType = tt;
-                        return true;
-                    }
+                    components.Add(comp);
                 }
             }
         }
-        return false;
+        return components.Count > 0;
     }
 
     private void DrawAnimationTypeInspector(DotweenAnimationContrl.AnimationType animationType, SerializedProperty sp)

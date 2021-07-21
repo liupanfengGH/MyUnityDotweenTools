@@ -85,20 +85,31 @@ public abstract class DotweenAnimationBaseEditor : Editor
         {
             components.Clear();
             var v1 = sp.FindPropertyRelative("target");
-            v1.objectReferenceValue = null;
+            if (v1.objectReferenceValue)
+            {
+                v1.objectReferenceValue = null;
+                serializedObject.ApplyModifiedProperties();
+            }
             int eIdx = (int)DotweenAnimationContrl.TargetType.Unset;
             var v2 = sp.FindPropertyRelative("targetType");
-            v2.enumValueIndex = eIdx;
+            if (v2.enumValueIndex != eIdx)
+            {
+                v2.enumValueIndex = eIdx;
+                serializedObject.ApplyModifiedProperties();
+            }
             var v3 = sp.FindPropertyRelative("forcedTargetType");
-            v3.enumValueIndex = eIdx;
-            serializedObject.ApplyModifiedProperties();
+            if (v3.enumValueIndex != eIdx)
+            {
+                v3.enumValueIndex = eIdx;
+                serializedObject.ApplyModifiedProperties();
+            }
 
             EditorGUILayout.BeginHorizontal();
             var style = new GUIStyle("Wizard Error").Clone();
             style.richText = true;
             var offset = style.contentOffset;
             style.contentOffset = new Vector2(offset.x, offset.y + 3.5f);
-            var content = new GUIContent("<color='#f3715c'>此动画类型不支持该作用对象或作用对象为None</color>");
+            var content = new GUIContent("<color='#f3715c'>此动画类型不支持该游戏对象</color>");
             GUILayout.Box(content, style, GUILayout.Height(20f));
             EditorGUILayout.EndHorizontal();
         }
