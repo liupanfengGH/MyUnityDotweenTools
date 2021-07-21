@@ -178,12 +178,6 @@ public class DotweenAnimationContrl : MonoBehaviour
         UIWidthHeight,
     }
 
-    public enum ChooseTargetMode:int
-    {
-        None,
-        BetweenCanvasGroupAndImage
-    }
-
     public enum FadeTargetType:int
     {
         CanvasGroup,

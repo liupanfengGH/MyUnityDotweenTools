@@ -671,42 +671,59 @@ public class DotweenAnimationContrlEditor : Editor
 
     private void DrawFade(SerializedProperty sp)
     {
-        var valueSo = sp.FindPropertyRelative("targetGO");
-
-        if (valueSo.objectReferenceValue is GameObject go)
+        if(components.Count > 1 && target is DotweenAnimationContrl dac)
         {
-            var canvasGroup = go.GetComponent<CanvasGroup>();
-            var image = go.GetComponent<Image>();
+            int idx = 0;
+            DotweenAnimationData animationData = null;
+            for (; idx < _tweens.arraySize; ++idx) 
+            {
+                var tmp = _tweens.GetArrayElementAtIndex(idx);
+                if (tmp.propertyPath.Equals(sp.propertyPath))//内存地址不一样！
+                {
+                    animationData = dac.animationList[idx];
+                    break;
+                }
+            }
 
             var valueSo2 = sp.FindPropertyRelative("forcedTargetType");
             var valueSo3 = sp.FindPropertyRelative("targetType");
             var valueSo4 = sp.FindPropertyRelative("target");
 
-            bool isTrue = canvasGroup && image;
-
-            DotweenAnimationContrl.ChooseTargetMode mode = isTrue ? DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage : DotweenAnimationContrl.ChooseTargetMode.None;
-            int eIndex = (int)DotweenAnimationContrl.TargetType.Unset;
-
-            if (mode == DotweenAnimationContrl.ChooseTargetMode.None)
+            bool isContain = false;
+            for (int i = 0; i < components.Count; ++i)
             {
-                bool isChange = valueSo2.enumValueIndex != eIndex;
-                valueSo2.enumValueIndex = eIndex;
-                if (isChange) serializedObject.ApplyModifiedProperties();
+                var t = components[i].GetType();
+                var tt = TypeToDoTargetType(t);
+                isContain = animationData.targetType == tt;
+                if (isContain) break;
             }
-            else if (mode == DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage)
+
+            if (!isContain)
             {
-                if (valueSo2.enumValueIndex == eIndex)//只赋值一次
+                var tt = TypeToDoTargetType(components[0].GetType());
+                animationData.target = components[0];
+                animationData.targetType = tt;
+                valueSo4.objectReferenceValue = components[0];
+                valueSo3.enumValueIndex = (int)tt;
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            var canvasGroup = components.Find((c) => { return c.GetType() == typeof(CanvasGroup); });
+            var image = components.Find((c) => { return c.GetType() == typeof(Image); });
+
+            if (canvasGroup && image)
+            {
+                if (animationData.forcedTargetType == DotweenAnimationContrl.TargetType.Unset)//只赋值一次
                 {
-                    valueSo2.enumValueIndex = valueSo3.enumValueIndex;
+                    animationData.forcedTargetType = animationData.targetType;
+                    valueSo2.enumValueIndex = (int)animationData.targetType;
                     serializedObject.ApplyModifiedProperties();
                 }
             }
 
-            var dType = (DotweenAnimationContrl.TargetType)Enum.ToObject(typeof(DotweenAnimationContrl.TargetType),valueSo2.enumValueIndex);
-
-            if (mode == DotweenAnimationContrl.ChooseTargetMode.BetweenCanvasGroupAndImage && dType != DotweenAnimationContrl.TargetType.Unset)
+            if (animationData.forcedTargetType != DotweenAnimationContrl.TargetType.Unset)
             {
-                DotweenAnimationContrl.FadeTargetType fadeTarget = (DotweenAnimationContrl.FadeTargetType)Enum.Parse(typeof(DotweenAnimationContrl.FadeTargetType), dType.ToString());
+                DotweenAnimationContrl.FadeTargetType fadeTarget = (DotweenAnimationContrl.FadeTargetType)Enum.Parse(typeof(DotweenAnimationContrl.FadeTargetType), animationData.forcedTargetType.ToString());
 
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.Label("褪色类型:", GUILayout.Width(55f));
@@ -1785,6 +1802,7 @@ public class DotweenAnimationContrlEditor : Editor
             int eIdx = EditorGUILayout.Popup(at.enumValueIndex, _tweensName, GUILayout.Width(80f));
             if(EditorGUI.EndChangeCheck())
             {
+                components.Clear();
                 at.enumValueIndex = eIdx;
                 var valueSo1 = sp.FindPropertyRelative("target");
                 valueSo1.objectReferenceValue = null;
@@ -1794,7 +1812,6 @@ public class DotweenAnimationContrlEditor : Editor
                 var valueSo3 = sp.FindPropertyRelative("forcedTargetType");
                 valueSo3.enumValueIndex = enumIdx;
                 serializedObject.ApplyModifiedProperties();
-                components.Clear();
                 GUIUtility.ExitGUI();
             }
 
@@ -1812,6 +1829,7 @@ public class DotweenAnimationContrlEditor : Editor
 
                 if (!newObj)
                 {
+                    components.Clear();
                     var valueSo1 = sp.FindPropertyRelative("target");
                     valueSo1.objectReferenceValue = null;
                     var valueSo2 = sp.FindPropertyRelative("targetType");
@@ -1821,13 +1839,12 @@ public class DotweenAnimationContrlEditor : Editor
                     valueSo3.enumValueIndex = enumIdx;
                 }
                 serializedObject.ApplyModifiedProperties();
-                components.Clear();
                 GUIUtility.ExitGUI();
             }
 
             GUILayout.FlexibleSpace();
 
-            bool validateSuccess = ValidateInfluenceGameObject(animationType, newObj as GameObject, idx);
+            bool validateSuccess = ValidateInfluenceGameObject(animationType, newObj as GameObject);
 
             EditorGUI.EndDisabledGroup();
 
@@ -1859,15 +1876,38 @@ public class DotweenAnimationContrlEditor : Editor
 
             if (validateSuccess)
             {
+                if(components.Count == 1)
+                {
+                    if (target is DotweenAnimationContrl dac)
+                    {
+                        var c = components[0];
+                        var data = dac.animationList[idx];
+                        var tt = TypeToDoTargetType(c.GetType());
 
-                //if (target is DotweenAnimationContrl dac)
-                //{
-                //    var data = dac.animationList[dataIndex];
-                //    var tt = TypeToDoTargetType(t);
-                //    data.target = comp;
-                //    data.targetType = tt;
-                //    return true;
-                //}
+                        var isChange = data.target != c;
+                        if(isChange)
+                        {
+                            var valueSo1 = sp.FindPropertyRelative("target");
+                            valueSo1.objectReferenceValue = c;
+                            serializedObject.ApplyModifiedProperties();
+                        }
+
+                        data.target = c;
+                        isChange = data.targetType != tt;
+                        if(isChange)
+                        {
+                            var valueSo2 = sp.FindPropertyRelative("targetType");
+                            valueSo2.enumValueIndex = (int)tt;
+
+                            var valueSo3 = sp.FindPropertyRelative("forcedTargetType");
+                            valueSo3.enumValueIndex = (int)DotweenAnimationContrl.TargetType.Unset;
+
+                            serializedObject.ApplyModifiedProperties();
+                        }
+
+                        data.targetType = tt;
+                    }
+                }
 
                 DrawAnimationTypeInspector(animationType, sp);
             }
@@ -2249,7 +2289,7 @@ public class DotweenAnimationContrlEditor : Editor
     /// <param name="animationType"></param>
     /// <param name="newObj"></param>
     private bool ValidateInfluenceGameObject(DotweenAnimationContrl.AnimationType animationType, 
-        GameObject newObj,int dataIndex)
+        GameObject newObj)
     {
         if (!newObj) return false;
 
