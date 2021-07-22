@@ -1948,14 +1948,15 @@ public class DotweenAnimationContrlEditor : Editor
 
     private void SpeedBase(SerializedProperty sp)
     {
-        var valueSo = sp.FindPropertyRelative("isSpeedBase");
-        EditorGUI.BeginChangeCheck();
-        var bValue = GUILayout.Toggle(valueSo.boolValue, new GUIContent("基于速度", "如果为TRUE，则将tween设置为基于速度的（持续时间将表示tween移动x秒的单位数）。对序列、嵌套tween或tween是否已经开始没有影响"), GUI.skin.button);
-        if (EditorGUI.EndChangeCheck())
-        {
-            valueSo.boolValue = bValue;
-            serializedObject.ApplyModifiedProperties();
-        }
+        //组播放不支持该属性
+        //var valueSo = sp.FindPropertyRelative("isSpeedBase");
+        //EditorGUI.BeginChangeCheck();
+        //var bValue = GUILayout.Toggle(valueSo.boolValue, new GUIContent("基于速度", "如果为TRUE，则将tween设置为基于速度的（持续时间将表示tween移动x秒的单位数）。对序列、嵌套tween或tween是否已经开始没有影响"), GUI.skin.button);
+        //if (EditorGUI.EndChangeCheck())
+        //{
+        //    valueSo.boolValue = bValue;
+        //    serializedObject.ApplyModifiedProperties();
+        //}
     }
 
     private void Delay(SerializedProperty sp)
