@@ -322,6 +322,7 @@ public class DotweenAnimationContrl : MonoBehaviour
         {
             vk.Value.Rewind();
             vk.Value.Kill();
+            ReSetFromDefaultValue(animationList[vk.Key]);
         }
         playingDict.Clear();
     }
