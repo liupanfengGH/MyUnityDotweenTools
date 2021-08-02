@@ -59,10 +59,10 @@ public class DotweenAnimationData
     /// 是否忽略时间缩放
     /// </summary>
     public bool isIgnoreTimeScale = false;
+    /// <summary>
+    /// 是否自动销毁(编辑器 没有支持)
+    /// </summary>
     public bool autoKill = false;
-
-    public bool isActive = true;
-    public bool isValid;
     /// <summary>
     /// 作用对象的Unity组件
     /// </summary>
